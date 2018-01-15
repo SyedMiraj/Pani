@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:paddingLeft="10dp"
+              android:paddingRight="10dp"
+              android:paddingBottom="10dp"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/newIrrigationDateTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="#000"
+        android:padding="10dp"
+        android:text="@string/nidl_date"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:id="@+id/newIrrigationAmountEt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:hint="@string/nidl_irrAmount"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/newIrrigationSaveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:layout_marginLeft="5dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="@string/nidl_save"/>
+    </LinearLayout>
+
+</LinearLayout>

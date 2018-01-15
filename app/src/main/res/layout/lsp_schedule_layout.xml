@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <include layout="@layout/appbar"/>
+    <TextView
+      android:id="@+id/noScheduleTextView"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:gravity="center"
+      android:textSize="20sp"
+      android:background="#fff"
+      android:text="@string/lcl_noSchedule"/>
+    <com.astuetz.PagerSlidingTabStrip
+          android:id="@+id/tabs"
+      android:layout_width="match_parent"
+      android:layout_height="48dip" />
+    <android.support.v4.view.ViewPager
+      android:id="@+id/pager"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+</LinearLayout>

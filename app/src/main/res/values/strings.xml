@@ -1,0 +1,130 @@
+<resources>
+    <string name="app_name">পানি</string>
+    <string-array name="crop_list">
+        <item>ফসল বাছাই করুন</item>
+        <item>ভুট্টা</item>
+        <item>গম</item>
+    </string-array>
+    <string name="loading">লোড হচ্ছে, দয়া করে অপেক্ষা করুন</string>
+    <string name="lvma_unable_map">দুঃখিত, ম্যাপটি দেখানো সম্ভব হচ্ছে না</string>
+    <string name="zooming">কাছে দেখানো হচ্ছে</string>
+    <string name="three_point">কমপক্ষে তিনটি পয়েন্ট সিলেক্ট করুন</string>
+    <string name="update">আপডেট</string>
+    <string name="req_sowing_date">দয়া করে বীজ বপনের তারিখটি দিন</string>
+    <string name="req_lsp_name">দয়া করে সেবা প্রদানকারী সিলেক্ট করুন</string>
+    <string name="req_crop_name">দয়া করে শস্যটি সিলেক্ট করুন</string>
+    <string name="req_field_name">দয়া করে জমির নাম দিন</string>
+    <string name="try_again">দয়া করে আবার চেষ্টা করুন</string>
+    <string name="data_not_displayed">ডাটা দেখানো সম্ভব হচ্ছে না</string>
+    <string name="problem_current_location">বর্তমান অবস্থান দেখানো সম্ভব হচ্ছে না</string>
+    <string name="success_reg">আপনার রেজিট্রেশন সফল হয়েছে, লগ ইন করুন</string>
+    <string name="login_form_fillup">লগইন ফরমটি পূরণ করুন</string>
+    <string-array name="lsp_list">
+        <item>Select a LSP</item>
+        <item>LSP 1</item>
+        <item>LSP 2</item>
+        <item>LSP 3</item>
+        <item>LSP 4</item>
+    </string-array>
+    <string name="FCM_PREF" translatable="false">miraj.biid.com.pani_200.fcm_pref</string>
+    <string name="FCM_TOKEN" translatable="false">miraj.biid.com.pani_200.fcm_token</string>
+    <string name="popup_logout">"লগ আউট"</string>
+    <string name="popup_edit_profile">"প্রোফাইল পরিবর্তন"</string>
+    <string name="splash_text">উন্নত সংখ্যাসূচক সেচ কর্মসূচী</string>
+    <string name="intro_text">"সেচ সময়সূচী সংক্রান্ত অ্যাপলিকেশনে আপনাকে স্বাগতম । \n
+        এই অ্যাপটি কৃষক ও কৃষি সেবা প্রদানকারীদের সেচ সময়সূচী ও সতর্ক বার্তা প্রদানের জন্য তৈরি করা হয়েছে ।
+        \n সেবাটি পেতে হলে 'প্রবেশ' বাটনে ক্লিক করুন"</string>
+    <string name="intro_enter">"প্রবেশ"</string>
+    <string name="splash_i_am">"আমি একজন "</string>
+    <string name="splash_farmer">"কৃষক "</string>
+    <string name="splash_LSP">"কৃষি সেবা প্রদানকারী "</string>
+    <string name="login_mobile">"মোবাইল নাম্বার "</string>
+    <string name="login_password">"পাসওয়ার্ড "</string>
+    <string name="login_login_btn">"লগ ইন "</string>
+    <string name="login_forget">"পাসওয়ার্ড ভুলে গেছেন ? "</string>
+    <string name="login_new_user">"নতুন ব্যবহারকারী "</string>
+
+    <string name="reg_mobile">"মোবাইল নাম্বার"</string>
+    <string name="reg_mobile_hint">"মোবাইল নাম্বার"</string>
+    <string name="reg_password">"পাসওয়ার্ড"</string>
+    <string name="reg_password_hint">"পাসওয়ার্ড দিন"</string>
+    <string name="reg_confirmPassword">"পাসওয়ার্ড নিশ্চিত করুন"</string>
+    <string name="reg_confirmPassword_hint">"পুনরায় পাসওয়ার্ড লিখুন"</string>
+    <string name="reg_name">"ব্যবহারকারীর নাম"</string>
+    <string name="reg_name_hint">"আপনার নামটি লিখুন"</string>
+    <string name="reg_cAddress">"বর্তমান ঠিকানা"</string>
+    <string name="reg_cAddress_hint">"ঠিকানা লিখুন"</string>
+    <string name="reg_nid">"জাতীয় পরিচয়-পত্র"</string>
+    <string name="reg_nid_hint">"পরিচয় পত্রের নাম্বার লিখুন"</string>
+    <string name="reg_pumpType">"পাম্পের ধরণ"</string>
+    <string name="reg_pumpType_hint">"পাম্পের ধরন্টি লিখুন"</string>
+    <string name="reg_pumpCapacity">"পাম্পের ক্ষমতা"</string>
+    <string name="reg_pumpCapacity_hint">"পাম্পের ক্ষমতা লিখুন"</string>
+    <string name="reg_registration">"রেজিস্ট্রেশন করুন"</string>
+    <string name="fml_welcome">"স্বাগতম "</string>
+    <string name="fml_field_map">"ম্যাপে জমি যোগ করুন "</string>
+    <string name="fml_field_manage">"জমি ব্যবস্থাপনা "</string>
+    <string name="fml_field_call_lsp">"সেবা প্রদানকারীকে \n ফোন দিন "</string>
+    <string name="fml_msg_lsp">"সেবা প্রদানকারীকে \n ম্যাসেজ দিন "</string>
+    <string name="camera_btn">ক্যামেরা</string>
+    <string name="analyze_btn">ছবি বিশ্লেষন</string>
+    <string name="fil_fieldName">"জমির নাম"</string>
+    <string name="fil_fieldName_hint">"জমির নাম লিখুন"</string>
+    <string name="fil_cropList">"ফসলের তালিকা"</string>
+    <string name="fil_lspList">"সেবা প্রদানকারীদের তালিকা"</string>
+    <string name="fil_sowingDate">"বীজ বপ্নের তারিখ"</string>
+    <string name="fil_selectSowingDate">"বীজ বপনের তারিখ নির্বাচন করুন"</string>
+    <string name="fil_viewOnMap">"ম্যাপে জমিটি দেখুন"</string>
+    <string name="fil_irrOn">"সেচ চালু করুন"</string>
+    <string name="fil_irrOff">"সেচ বন্ধ করুন"</string>
+    <string name="fil_irrComp">"সেচ শেষ হয়েছে ?"</string>
+    <string name="fil_updateField">"জমির অবস্থান আপডেট করুন"</string>
+    <string name="fil_delete">"বাতিল করুন"</string>
+    <string name="fil_save">"সংরক্ষণ করুন"</string>
+    <string name="computing">গণনা চলছে</string>
+    <string name="pal_photo_select">ছবি নির্বাচন</string>
+    <string name="pal_photo_analyze">বিশ্লেষন</string>
+    <string name="pal_show_result">রেজাল্ট</string>
+
+    <string name="mml_clear">"মুছুন"</string>
+    <string name="mml_current">"বর্তমান অবস্থান"</string>
+    <string name="mml_save">"সংরক্ষণ"</string>
+
+    <string name="fll_noFieldSaveYet">"এখন পর্যন্ত কোন জমি নির্বাচন করা হয় নাই"</string>
+    <string name="nidl_date">"তারিখঃ ০১/০২/২০১৭"</string>
+    <string name="nidl_irrAmount">"সেচের পরিমান"</string>
+    <string name="nidl_save">"সংরক্ষণ"</string>
+
+    <string name="flcsr_fieldName">"জমির নাম"</string>
+
+    <string name="fdl_fieldName">"জমির নামঃ "</string>
+    <string name="fdl_smpFieldName">"জমি-১"</string>
+    <string name="fdl_farmerName">"কৃষকের নামঃ "</string>
+    <string name="fdl_smpFarmerName">"জলিল মিয়া"</string>
+    <string name="fdl_address">"ঠিকানাঃ "</string>
+    <string name="fdl_smpAddress">"বরিশাল"</string>
+    <string name="fdl_phone">"ফোনঃ "</string>
+    <string name="fdl_cropName">"শস্যের নামঃ "</string>
+    <string name="fdl_smpCropName">"ভুট্টা"</string>
+    <string name="fdl_sowingDate">"বীজ বপনের তারিখঃ "</string>
+    <string name="fdl_smpSowingDate">"০১/১০/২০১৭"</string>
+    <string name="fdl_map">"ম্যাপ"</string>
+    <string name="fdl_nextIrrigationDate">"পরবর্তী সেচের তারিখ ঠিক করুন"</string>
+    <string name="fdl_callFarmer">"কৃষককে ফোন দিন"</string>
+    <string name="fdl_save">"সংরক্ষণ"</string>
+
+    <string name="lml_map">"ম্যাপ দেখুন"</string>
+    <string name="lml_list">"তালিকা দেখুন"</string>
+    <string name="lml_schedule">"সময়সূচী দেখুন"</string>
+    <string name="lml_support">"সহায়তা নিন"</string>
+
+    <string name="lcl_noSchedule">"কোন সময়সূচী পাওয়া যায় নাই"</string>
+    <string name="lvla_field_det">জমির বর্ণনা</string>
+
+    <string name="fll_noMessageYet">এখন পর্যন্ত কোন সেচ বার্তা আসে নাই</string>
+    <string name="hello_blank_fragment">কোন ছবি নির্বাচন করা হয় নাই</string>
+    <string name="iu_field_image">জমির ছবি</string>
+
+    <string name="result"></string>
+    <string name="analyze"></string>
+</resources>

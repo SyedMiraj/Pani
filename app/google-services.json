@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "581503931849",
+    "firebase_url": "https://pani-fcb89.firebaseio.com",
+    "project_id": "pani-fcb89",
+    "storage_bucket": "pani-fcb89.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581503931849:android:399aa30472370238",
+        "android_client_info": {
+          "package_name": "miraj.biid.com.pani_200"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "581503931849-f6pi3tk9a94i58jmb9btaa3kskd1gv47.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAX4Glj0TJk3pcIMq_7NUmhB99uVhb6W0U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
