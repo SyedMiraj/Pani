@@ -51,9 +51,17 @@
 
     </LinearLayout>
 
-    <fragment
+    <ScrollView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:name="miraj.biid.com.pani_200.BlankFragment"
-        android:id="@+id/blank_fragment"/>
+        android:layout_margin="10dp">
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/linearImage">
+
+        </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>
