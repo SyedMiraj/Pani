@@ -125,6 +125,6 @@
     <string name="hello_blank_fragment">কোন ছবি নির্বাচন করা হয় নাই</string>
     <string name="iu_field_image">জমির ছবি</string>
 
-    <string name="result"></string>
-    <string name="analyze"></string>
+    <string name="result">রেজাল্ট দেখুন</string>
+    <string name="upload">আপলোড করুন</string>
 </resources>

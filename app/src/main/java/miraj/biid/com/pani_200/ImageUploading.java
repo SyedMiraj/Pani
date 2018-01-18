@@ -1,24 +1,44 @@
 package miraj.biid.com.pani_200;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
+import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.PhotoLoader;
+
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import miraj.biid.com.pani_200.utils.Util;
 
 /**
  * Created by Shahriar Miraj on 15/11/2017.
@@ -29,8 +49,12 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     Toolbar toolbar;
     GalleryPhoto galleryPhoto;
     CameraPhoto cameraPhoto;
-    LinearLayout linearImage;
+    LinearLayout linearImage, linearUpRes;
     ImageView imageView;
+    MyCommand myCommand;
+    int bucketSize = 2;
+    Button uploadBtn, resultBtn;
+    private ProgressDialog progressDialog;
     private final int GALLERY_REQUEST = 1200;
     private final int CAMERA_REQUEST = 1500;
     List<String> imageList =  new ArrayList<String>();
@@ -45,6 +69,8 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         init();
         camera.setOnClickListener(this);
         addImg.setOnClickListener(this);
+        uploadBtn.setOnClickListener(this);
+        resultBtn.setOnClickListener(this);
     }
 
     private void init(){
@@ -53,6 +79,19 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         cameraPhoto = new CameraPhoto(getApplicationContext());
         galleryPhoto = new GalleryPhoto(getApplicationContext());
         linearImage = (LinearLayout) findViewById(R.id.linearImage);
+        linearUpRes = (LinearLayout) findViewById(R.id.result_upload_layout);
+        uploadBtn = (Button) findViewById(R.id.uploadBtn);
+        resultBtn = (Button) findViewById(R.id.resultBtn);
+        myCommand = new MyCommand(getApplicationContext());
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Computing...");
+        progressDialog.setProgressNumberFormat(null);
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
     }
 
     @Override
@@ -63,6 +102,12 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.addimg:
                 addImageInList();
+                break;
+            case R.id.uploadBtn:
+                uploadImageActivity(imageList);
+                break;
+            case R.id.resultBtn:
+                analyzeResultActivity(imageList);
                 break;
         }
     }
@@ -79,6 +124,142 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     private void addImageInList() {
         Intent intent=galleryPhoto.openGalleryIntent();
         startActivityForResult(intent,GALLERY_REQUEST);
+    }
+
+    private void uploadImageActivity(List<String> imageList) {
+        String url = "http://bijoya.org/public/api/fields_image";
+        if(imageList != null){
+            for(String imagePath : imageList){
+                try{
+                    Bitmap bitmap = PhotoLoader.init().from(imagePath).requestSize(512,512).getBitmap();
+                    final String encodedString = ImageBase64.encode(bitmap);
+                    StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(getApplicationContext(),"Image Upload Successful",Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(),"Image Upload Failed",Toast.LENGTH_SHORT).show();
+                        }
+                    }){
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> params =  new HashMap<String, String>();
+                            params.put("image",encodedString);
+                            params.put("fieldId",String.valueOf(49));
+                            return params;
+                        }
+                    };
+
+                    myCommand.add(request);
+
+                }catch(Exception e){
+                    Toast.makeText(getApplicationContext(),"Upload Failed",Toast.LENGTH_SHORT).show();
+                }
+            }
+            myCommand.execute();
+        }
+    }
+
+    private void analyzeResultActivity(final List<String> imageList) {
+        if(imageList != null && !imageList.isEmpty()){
+                progressDialog.setProgress(0);
+                progressDialog.show();
+
+                final Handler handler = new Handler() {
+                    public void handleMessage(Message msg) {
+                        switch(msg.getData().getString("Command")) {
+                            case "Message":
+                                showResult(msg.getData().getString("Title"), msg.getData().getString("Message"));
+                                break;
+                            case "Progress":
+                                progressDialog.setProgress(msg.getData().getInt("Progress"));
+                                String message = msg.getData().getString("Message");
+                                if (message != "")
+                                    progressDialog.setMessage(message);
+                                break;
+                            case "HideProgress":
+                                progressDialog.dismiss();
+                        }
+                    }
+                };
+                new Thread() {
+                    private ProgressMonitor progressMonitor = new ProgressMonitor() {
+
+                        @Override
+                        protected void setProgress(int progress) {
+                            currentProgress = progress;
+                            Message msg = handler.obtainMessage();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("Command", "Progress");
+                            bundle.putInt("Progress", currentProgress);
+                            bundle.putString("Message", "");
+                            msg.setData(bundle);
+                            handler.sendMessage(msg);
+                        }
+
+                        protected void setMessage(String message) {
+                            Message msg = handler.obtainMessage();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("Command", "Progress");
+                            bundle.putInt("Progress", currentProgress);
+                            bundle.putString("Message", message);
+                            msg.setData(bundle);
+                            handler.sendMessage(msg);
+                        }
+                    };
+
+                    private void showResult(String title, String message) {
+                        Message msg = handler.obtainMessage();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("Command", "Message");
+                        bundle.putString("Title", title);
+                        bundle.putString("Message", message);
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+                    }
+
+                    private void hideProgress() {
+                        Message msg = handler.obtainMessage();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("Command", "HideProgress");
+                        msg.setData(bundle);
+                        handler.sendMessage(msg);
+                    }
+
+                    public void run() {
+                        final DecimalFormat df = new DecimalFormat("#.##");
+                        progressMonitor.setMessage("Computing SVM Index...");
+                        Map<String, Double> results = new HashMap<String, Double>();
+                        for(String imagepath : imageList){
+                            SvmComputer svmcomp = new SvmComputer(bucketSize, getResources());
+                            String message = svmcomp.computeFcover(imagepath, results, progressMonitor);
+                            if (message.length() > 0)
+                                showResult("Warning", message);
+                        }
+                        progressMonitor.setMessage("Complete!");
+                        hideProgress();
+                        String text = "";
+                        for (String index : results.keySet()) {
+                            double value = results.get(index);
+                            text += index + " = " + df.format(100.0 * value) + " %\n";
+                        }
+                        showResult("RESULT", text);
+//                        text = "";
+//                        for (String index : results.keySet()) {
+//                            double value = results.get(index);
+//                            text += "\t" + index + "=" + value;
+//                        }
+//                        String filename = picturePath.substring(picturePath.lastIndexOf("/") + 1);
+//                        generateNoteOnSD(ctx, "Result", filename + text);
+                    }
+                }.start();
+
+        }else{
+            Util.showToast(getApplicationContext(),"No image selected yet!!!");
+        }
     }
 
     @Override
@@ -128,6 +309,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
             } else if (imageList.size() == 2) {
                 MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.two);
                 mPlayer.start();
+                linearUpRes.setVisibility(View.VISIBLE);
             } else if (imageList.size() == 3) {
                 MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.three);
                 mPlayer.start();
@@ -174,4 +356,19 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    public void showResult(String title, String message) {
+
+        final TextView myView = new TextView(getApplicationContext());
+        myView.setTextSize(22);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        builder.show();
+
+    }
 }
