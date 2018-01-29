@@ -1,6 +1,7 @@
 package miraj.biid.com.pani_200;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -30,6 +31,12 @@ import com.kosalgeek.android.photoutil.CameraPhoto;
 import com.kosalgeek.android.photoutil.GalleryPhoto;
 import com.kosalgeek.android.photoutil.ImageBase64;
 import com.kosalgeek.android.photoutil.PhotoLoader;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -38,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.Header;
+import miraj.biid.com.pani_200.helpers.HTTPHelper;
 import miraj.biid.com.pani_200.utils.Util;
 
 /**
@@ -53,11 +62,15 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     ImageView imageView;
     MyCommand myCommand;
     int bucketSize = 2;
+    String fieldId = null;
+    String finalResult = null;
     Button uploadBtn, resultBtn;
     private ProgressDialog progressDialog;
     private final int GALLERY_REQUEST = 1200;
     private final int CAMERA_REQUEST = 1500;
     List<String> imageList =  new ArrayList<String>();
+    AsyncHttpClient httpClient;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +87,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     }
 
     private void init(){
+        context = this;
         camera = (TextView) findViewById(R.id.camera);
         addImg = (TextView) findViewById(R.id.addimg);
         cameraPhoto = new CameraPhoto(getApplicationContext());
@@ -83,15 +97,8 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         uploadBtn = (Button) findViewById(R.id.uploadBtn);
         resultBtn = (Button) findViewById(R.id.resultBtn);
         myCommand = new MyCommand(getApplicationContext());
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setMax(100);
-        progressDialog.setMessage("Computing...");
-        progressDialog.setProgressNumberFormat(null);
-        progressDialog.setCancelable(true);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-
+        fieldId = getIntent().getExtras().getString("fieldId");
+        httpClient= HTTPHelper.getHTTPClient();
     }
 
     @Override
@@ -148,7 +155,8 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                         protected Map<String, String> getParams() throws AuthFailureError {
                             Map<String, String> params =  new HashMap<String, String>();
                             params.put("image",encodedString);
-                            params.put("fieldId",String.valueOf(49));
+                            params.put("field_id",fieldId);
+                            params.put("farmer_id",User.getUserId());
                             return params;
                         }
                     };
@@ -164,6 +172,14 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     }
 
     private void analyzeResultActivity(final List<String> imageList) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Computing...");
+        progressDialog.setProgressNumberFormat(null);
+        progressDialog.setCancelable(true);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         if(imageList != null && !imageList.isEmpty()){
                 progressDialog.setProgress(0);
                 progressDialog.show();
@@ -182,6 +198,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                                 break;
                             case "HideProgress":
                                 progressDialog.dismiss();
+                                saveImageValueToServer(finalResult,fieldId);
                         }
                     }
                 };
@@ -230,6 +247,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                     }
 
                     public void run() {
+                        Double cumulativeValue = 0.0;
                         final DecimalFormat df = new DecimalFormat("#.##");
                         progressMonitor.setMessage("Computing SVM Index...");
                         Map<String, Double> results = new HashMap<String, Double>();
@@ -242,24 +260,24 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                         progressMonitor.setMessage("Complete!");
                         hideProgress();
                         String text = "";
+                        String result = "";
                         for (String index : results.keySet()) {
                             double value = results.get(index);
-                            text += index + " = " + df.format(100.0 * value) + " %\n";
+                            cumulativeValue = cumulativeValue + value;
+                            result = df.format(100.0 * cumulativeValue/results.keySet().size());
+                            convertValue(result);
                         }
+                        text = "svm" + " = " + result + " %\n";
                         showResult("RESULT", text);
-//                        text = "";
-//                        for (String index : results.keySet()) {
-//                            double value = results.get(index);
-//                            text += "\t" + index + "=" + value;
-//                        }
-//                        String filename = picturePath.substring(picturePath.lastIndexOf("/") + 1);
-//                        generateNoteOnSD(ctx, "Result", filename + text);
                     }
                 }.start();
-
         }else{
             Util.showToast(getApplicationContext(),"No image selected yet!!!");
         }
+    }
+
+    private void convertValue(String result) {
+        this.finalResult = result;
     }
 
     @Override
@@ -278,7 +296,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    public void addImageToInterface(String imagePath){
+    public void addImageToInterface(final String imagePath){
         if(imagePath != null){
             imageList.add(imagePath);
             try {
@@ -292,7 +310,27 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                 imageView.setAdjustViewBounds(true);
                 imageView.setImageBitmap(bitmap);
                 linearImage.addView(imageView);
-                imageView.setOnClickListener(this);
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                        alertDialog.setTitle("আপনি কি ছবিটি বাতিল করতে চান ?");
+                        alertDialog.setPositiveButton("হ্যাঁ", new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialog, int which) {
+                                linearImage.removeViewAt(imageList.indexOf(imagePath));
+                                imageList.remove(imagePath);
+                           }
+                       });
+                        alertDialog.setNegativeButton("না", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                });
                 playTheAudio();
             }catch(Exception e){
 
@@ -363,12 +401,48 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
         builder.setTitle(title);
-        builder.setMessage(message).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        });
+        builder.setMessage(message).setPositiveButton("OK", null);
         builder.show();
-
     }
+
+    private void saveImageValueToServer(String value, String fieldId) {
+        if(value != null){
+            RequestParams params = new RequestParams();
+            params.add("field_id", fieldId);
+            params.add("gca_value", value);
+
+            httpClient.post("http://bijoya.org/public/api/field_value", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onStart() {
+                    super.onStart();
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    try {
+                        if (statusCode == 200 && response.getInt("success") == 1) {
+                            Util.showToast(getApplicationContext(), "Data Update Successful");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                    Util.showToast(getApplicationContext(), "Data Update failed");
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    progressDialog.dismiss();
+                }
+            });
+        }
+    }
+
+
 }

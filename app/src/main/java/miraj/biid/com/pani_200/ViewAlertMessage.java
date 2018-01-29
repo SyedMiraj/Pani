@@ -29,7 +29,7 @@ import miraj.biid.com.pani_200.utils.Util;
  * Created by Shahriar Miraj on 26/10/2017.
  */
 
-class ViewAlertMessage extends AppCompatActivity{
+public class ViewAlertMessage extends AppCompatActivity{
 
     ListView messageListView;
     Context context;

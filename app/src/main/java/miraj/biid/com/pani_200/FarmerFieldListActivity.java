@@ -40,6 +40,7 @@ public class FarmerFieldListActivity extends AppCompatActivity {
     ArrayList<Field> fieldList;
     TextView noFieldListTextView;
 
+    private int FIELD_REQUEST_VALUE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +55,12 @@ public class FarmerFieldListActivity extends AppCompatActivity {
         httpClient= HTTPHelper.getHTTPClient();
         fieldListView= (ListView) findViewById(R.id.fieldListView);
         getAllFields();
-
         fieldListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 FieldDetailsInputActivity.existField=fieldList.get(i);
                 Intent fieldDetailsIntent=new Intent(FarmerFieldListActivity.this,FieldDetailsInputActivity.class);
-                startActivity(fieldDetailsIntent);
+                startActivityForResult(fieldDetailsIntent, FIELD_REQUEST_VALUE);
             }
         });
     }
@@ -169,7 +169,7 @@ public class FarmerFieldListActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==101 && resultCode==RESULT_OK){
+        if(requestCode == FIELD_REQUEST_VALUE && resultCode==RESULT_OK){
             getAllFields();
         }
     }

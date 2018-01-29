@@ -81,6 +81,10 @@
             android:name=".ImageUploading"
             android:parentActivityName=".FarmerFieldListActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ViewAlertMessage"
+            android:parentActivityName=".FarmerFieldListActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".MyMessagingService">
