@@ -45,8 +45,8 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
 
     EditText fieldNameEt;
     Spinner cropNameSp, lspNameSp;
-    Button fieldSowingDateBtn, updateLocationBtn,deleteBtn, submitBtn, viewOnMapBtn;
-    String sowingDateText, emergenceDateText;
+    Button fieldSowingDateBtn, updateLocationBtn,deleteBtn, submitBtn, viewOnMapBtn, fieldIrrigationDateBtn;
+    String sowingDateText, irrigationDateText;
     AsyncHttpClient httpClient;
     ProgressDialog progressDialog;
     LinearLayout viewDetailsLayout;
@@ -77,18 +77,21 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
             submitBtn.setText(this.getString(R.string.update));
             deleteBtn.setVisibility(View.VISIBLE);
             fieldNameEt.setText(existField.getFieldName());
-
             fieldSowingDateBtn.setText(existField.getFieldSowingDate());
             sowingDateText = existField.getFieldSowingDate();
             viewDetailsLayout.setVisibility(View.VISIBLE);
             if (existField.isIrrigationDone()) {
                 irrigationDone.setChecked(true);
             }
+            if(existField.getFieldIrrigationDate() != null){
+                fieldIrrigationDateBtn.setText(existField.getFieldIrrigationDate());
+            }
             if (existField.isIrrigationOff()) irrigationOnOff.setChecked(false);
-        }else {
-            fieldSowingDateBtn.setText(Util.getTodayDate("dd/MM/yyyy"));
-            sowingDateText = Util.getTodayDate("yyyy-MM-dd");
         }
+//        else {
+//            fieldSowingDateBtn.setText(Util.getTodayDate("dd/MM/yyyy"));
+//            sowingDateText = Util.getTodayDate("yyyy-MM-dd");
+//        }
     }
 
     /**
@@ -99,6 +102,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         cropNameSp = (Spinner) findViewById(R.id.cropListSpinner);
         lspNameSp = (Spinner) findViewById(R.id.lspNameListSpinner);
         fieldSowingDateBtn = (Button) findViewById(R.id.fieldSowingDateBtn);
+        fieldIrrigationDateBtn = (Button) findViewById(R.id.fieldIrrigationDateBtn);
         submitBtn = (Button) findViewById(R.id.fieldDetailsSaveBtn);
         updateLocationBtn = (Button) findViewById(R.id.fieldDetailsUpdateLocationBtn);
         deleteBtn = (Button) findViewById(R.id.fieldDetailsDeleteBtn);
@@ -109,16 +113,23 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         fieldSowingDateBtn.setOnClickListener(this);
         submitBtn.setOnClickListener(this);
         viewOnMapBtn.setOnClickListener(this);
+        fieldIrrigationDateBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fieldDetailsViewOnMapBtn:
-                Util.printDebug("location", existField.getFieldLocation());
+                Intent intent=new Intent(FieldDetailsInputActivity.this,AddFieldsActivity.class);
+                intent.putExtra("singlefield",true);
+                intent.putExtra("field_location",existField.getFieldId());
+                startActivity(intent);
                 break;
             case R.id.fieldSowingDateBtn:
                 showDateDialog(fieldSowingDateBtn, true);
+                break;
+            case R.id.fieldIrrigationDateBtn:
+                showDateDialog(fieldIrrigationDateBtn, true);
                 break;
             case R.id.fieldDetailsSaveBtn:
                 String toastText = null;
@@ -133,9 +144,10 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
                                                 lspArrayList.get(lspNameSp.getSelectedItemPosition()).getId(), sowingDateText,
                                                 irrigationOn,irrigationComplete,User.getUserId());
                                     } else {
+                                        irrigationDateText = fieldIrrigationDateBtn.getText().toString();
                                         progressDialog = Util.getProgressDialog(FieldDetailsInputActivity.this, "Updating. Please Wait...");
                                         updateFieldDetails(existField.getFieldId(), fieldNameEt.getText().toString(), cropNameSp.getSelectedItem().toString(),
-                                                lspArrayList.get(lspNameSp.getSelectedItemPosition()).getId(), sowingDateText, irrigationOnOff.isChecked(), irrigationDone.isChecked(),User.getUserId());
+                                                lspArrayList.get(lspNameSp.getSelectedItemPosition()).getId(), sowingDateText, irrigationDateText, irrigationOnOff.isChecked(), irrigationDone.isChecked(),User.getUserId());
                                     }
                             } else toastText = this.getString(R.string.req_sowing_date);
                         } else toastText = this.getString(R.string.req_lsp_name);
@@ -157,7 +169,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
      * @param irrigationDone    is irrigation done
      */
     private void updateFieldDetails(String fieldId, String fieldName, String cropName,
-                                    String lsp_id, String sowingDateText,boolean irrigationOn,
+                                    String lsp_id, String sowingDateText,  String irrigationDateText, boolean irrigationOn,
                                     boolean irrigationDone, String farmerId) {
         RequestParams params = new RequestParams();
         params.add("field_id", fieldId);
@@ -168,6 +180,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         params.add("irrigation_off", irrigationOn ? "0" : "1");
         params.add("irrigation_done", irrigationDone ? "1" : "0");
         params.add("farmer_id", farmerId);
+        params.add("field_irrigation_date", irrigationDateText);
 
         httpClient.put("http://bijoya.org/public/api/updatefields", params, new JsonHttpResponseHandler() {
             @Override
@@ -285,11 +298,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        btn.setText(dayOfMonth + "/" + ++monthOfYear + "/" + year);
-                        if (sowingDate) {
-                            sowingDateText = year + "-" + (monthOfYear) + "-" + dayOfMonth;
-                        } else
-                            emergenceDateText = year + "-" + (monthOfYear) + "-" + dayOfMonth;
+                        btn.setText(year + "-" + (monthOfYear) + "-" + dayOfMonth);
                     }
                 }, mYear, mMonth, mDay);
         dpd.show();

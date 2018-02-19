@@ -48,10 +48,8 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
     PolygonOptions rectOptions;
     Polygon polygon;
     Button polygonClearBtn,polygonSubmitBtn,addCurrentMarkerBtn;
-    HashMap<Marker,Field> markerFieldList;
     AsyncHttpClient httpClient;
     ProgressDialog progressDialog;
-    ArrayList<Field> fieldArrayList;
     Toolbar toolbar;
 
     @Override
@@ -60,7 +58,6 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.main_map_layout);
         init();
         try {
-            // Loading map
             initializeMap();
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,9 +92,6 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
             googleMap = ((MapFragment) getFragmentManager().findFragmentById(
                     R.id.map)).getMap();
             googleMap.getUiSettings().setZoomControlsEnabled(true);
-//            SupportMapFragment supportMapFragment= (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-//            supportMapFragment.getMapAsync(this);
-            // check if map is created successfully or not
             if (googleMap == null) {
                 Toast.makeText(getApplicationContext(),
                         this.getString(R.string.lvma_unable_map), Toast.LENGTH_SHORT)
@@ -105,7 +99,6 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
             }else{
                 googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 centerMapOnMyLocation();
-                getAllFields();
             }
         }
     }
@@ -120,87 +113,10 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
         }else Util.showToast(this,"Problem show current location");
     }
 
-    public void getAllFields() {
-        httpClient.get("http://bijoya.org/public/api/fields/"+User.getUserId(),new JsonHttpResponseHandler() {
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                progressDialog.show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                try {
-                    if(statusCode==200 && response.getInt("success")==1){
-                        JSONArray fields=response.getJSONArray("fields");
-                        fieldArrayList=new ArrayList<>();
-                        markerFieldList=new HashMap<Marker, Field>();
-                        for (int i=0;i<fields.length();i++){
-                            JSONObject fieldObject=fields.getJSONObject(i);
-                            Util.printDebug("Field object",fieldObject.toString());
-                            Field field=new Field();
-                            field.setFieldId(fieldObject.getString("field_id"));
-                            field.setFieldName(fieldObject.getString("field_name"));
-                            field.setCropName(fieldObject.getString("crop_name"));
-                            field.setLspId(fieldObject.getString("lsp_id"));
-                            field.setFieldLocation(fieldObject.getString("location"));
-                            field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
-                            fieldArrayList.add(field);
-
-                            String location=fieldObject.getString("location");
-                            String locations[]=location.split(";");
-                            PolygonOptions option=new PolygonOptions();
-                            ArrayList<LatLng> latLangList=new ArrayList<>();
-                            for(int n=0;n<locations.length;n++){
-                                LatLng latlan=new LatLng(Double.parseDouble(locations[n].split(":")[0]),Double.parseDouble(locations[n].split(":")[1]));
-                                option.add(latlan);
-                                latLangList.add(latlan);
-                            }
-                            googleMap.addPolygon(option);
-                            LatLng center=getPolygonCenterPoint(latLangList);
-                            MarkerOptions markerOptions=new MarkerOptions().position(center).title(fieldObject.getString("field_name"));
-                            Marker marker=googleMap.addMarker(markerOptions);
-                            marker.showInfoWindow();
-                            markerFieldList.put(marker,field);
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Util.printDebug("Json exception",e.getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Util.printDebug("Get all fields fail",statusCode+"");
-            }
-
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                progressDialog.dismiss();
-            }
-        });
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
         initializeMap();
-    }
-
-    private LatLng getPolygonCenterPoint(ArrayList<LatLng> polygonPointsList){
-        LatLng centerLatLng = null;
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for(int i = 0 ; i < polygonPointsList.size() ; i++){
-            builder.include(polygonPointsList.get(i));
-        }
-        LatLngBounds bounds = builder.build();
-        centerLatLng =  bounds.getCenter();
-        return centerLatLng;
     }
 
     @Override

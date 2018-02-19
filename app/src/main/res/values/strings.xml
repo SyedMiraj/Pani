@@ -72,7 +72,8 @@
     <string name="fil_fieldName_hint">"জমির নাম লিখুন"</string>
     <string name="fil_cropList">"ফসলের তালিকা"</string>
     <string name="fil_lspList">"সেবা প্রদানকারীদের তালিকা"</string>
-    <string name="fil_sowingDate">"বীজ বপ্নের তারিখ"</string>
+    <string name="fil_sowingDate">"বীজ বপণের তারিখ"</string>
+    <string name="fil_irrigation_date">"সেচের তারিখ"</string>
     <string name="fil_selectSowingDate">"বীজ বপনের তারিখ নির্বাচন করুন"</string>
     <string name="fil_viewOnMap">"ম্যাপে জমিটি দেখুন"</string>
     <string name="fil_irrOn">"সেচ চালু করুন"</string>

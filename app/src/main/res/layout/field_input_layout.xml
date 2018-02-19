@@ -71,6 +71,21 @@
               android:padding="5dp"
               android:layout_marginBottom="4dp"
               android:text="@string/fil_sowingDate"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="15sp"
+                android:padding="3dp"
+                android:text="সেচের তারিখ নির্বাচন করুন"/>
+            <Button
+                android:id="@+id/fieldIrrigationDateBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:padding="5dp"
+                android:layout_marginBottom="4dp"
+                android:text="সেচের তারিখ"/>
             <LinearLayout
               android:id="@+id/fieldViewDetailsLayout"
               android:layout_width="match_parent"

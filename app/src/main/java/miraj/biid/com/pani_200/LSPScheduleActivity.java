@@ -53,7 +53,6 @@ public class LSPScheduleActivity extends AppCompatActivity{
         httpClient= HTTPHelper.getHTTPClient();
         progressDialog= Util.getProgressDialog(this,this.getString(R.string.loading));
         noScheduleTv= (TextView) findViewById(R.id.noScheduleTextView);
-
         pager= (ViewPager) findViewById(R.id.pager);
         getAllFieldsByLSP();
 

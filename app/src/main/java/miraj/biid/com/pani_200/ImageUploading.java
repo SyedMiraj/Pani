@@ -443,6 +443,4 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
             });
         }
     }
-
-
 }
