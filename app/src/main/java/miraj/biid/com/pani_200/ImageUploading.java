@@ -156,7 +156,6 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                             Map<String, String> params =  new HashMap<String, String>();
                             params.put("image",encodedString);
                             params.put("field_id",fieldId);
-                            params.put("farmer_id",User.getUserId());
                             return params;
                         }
                     };

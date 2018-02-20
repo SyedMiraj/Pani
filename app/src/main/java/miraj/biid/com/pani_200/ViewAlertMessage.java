@@ -37,6 +37,7 @@ public class ViewAlertMessage extends AppCompatActivity{
     ProgressDialog progressDialog;
     TextView noMessageListTextView;
     ArrayList<AlertMessages> messages;
+    String fieldId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class ViewAlertMessage extends AppCompatActivity{
         setContentView(R.layout.notification_list);
         Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        fieldId = getIntent().getStringExtra("field");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         noMessageListTextView= (TextView) findViewById(R.id.noFieldTextView);
         context=this;
@@ -56,8 +58,8 @@ public class ViewAlertMessage extends AppCompatActivity{
     private void getAllMessages() {
         RequestParams param=new RequestParams();
         param.add("farmer_id",User.getUserId());
-        param.add("field_id",User.getUserId());
-        httpClient.get("http://bijoya.org/public/api/notification_messages",param, new JsonHttpResponseHandler() {
+        param.add("field_id",fieldId);
+        httpClient.post("http://bijoya.org/public/api/notification_messages",param, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -70,13 +72,13 @@ public class ViewAlertMessage extends AppCompatActivity{
                 try {
                     messages=new ArrayList<AlertMessages>();
                     if(response.getInt("success")==1){
-                        JSONArray messagesArray=response.getJSONArray("messages");
+                        JSONArray messagesArray=response.getJSONArray("alert");
                         for (int i=0;i<messagesArray.length();i++){
                             JSONObject messageObject=messagesArray.getJSONObject(i);
                             AlertMessages alertMessages=new AlertMessages();
-                            String date=messageObject.getString("date");
+                            String date=messageObject.getString("recieve_date");
                             alertMessages.setDate(date);
-                            String signal=messageObject.getString("signal");
+                            String signal=messageObject.getString("signal_irrgation");
                             //will change the text with required format
                             alertMessages.setText(signal);
                            messages.add(alertMessages);

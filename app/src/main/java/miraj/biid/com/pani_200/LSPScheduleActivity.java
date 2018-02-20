@@ -55,8 +55,6 @@ public class LSPScheduleActivity extends AppCompatActivity{
         noScheduleTv= (TextView) findViewById(R.id.noScheduleTextView);
         pager= (ViewPager) findViewById(R.id.pager);
         getAllFieldsByLSP();
-
-        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
     }
 
     /**
@@ -125,11 +123,11 @@ public class LSPScheduleActivity extends AppCompatActivity{
                             field.setFieldLocation(fieldObject.getString("location"));
                             field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
                             field.setFieldIrrigationDate(fieldObject.getString("irrigation_date"));
-//                            if(fieldObject.has("suggestion")) field.setSuggestion(fieldObject.getString("suggestion"));
-
+                            
                             fieldArrayList.add(field);
                         }
                         pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+                        tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
                         tabs.setViewPager(pager);
                         if(fieldArrayList.size()!=0)
                             noScheduleTv.setVisibility(View.GONE);

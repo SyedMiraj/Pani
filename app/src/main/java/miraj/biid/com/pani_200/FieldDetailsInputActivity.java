@@ -88,10 +88,10 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
             }
             if (existField.isIrrigationOff()) irrigationOnOff.setChecked(false);
         }
-//        else {
-//            fieldSowingDateBtn.setText(Util.getTodayDate("dd/MM/yyyy"));
-//            sowingDateText = Util.getTodayDate("yyyy-MM-dd");
-//        }
+        else {
+            fieldSowingDateBtn.setText(Util.getTodayDate("dd/MM/yyyy"));
+            sowingDateText = Util.getTodayDate("yyyy-MM-dd");
+        }
     }
 
     /**
