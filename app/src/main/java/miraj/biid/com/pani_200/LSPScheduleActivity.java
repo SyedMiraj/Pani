@@ -122,7 +122,7 @@ public class LSPScheduleActivity extends AppCompatActivity{
                             field.setLspId(fieldObject.getString("lsp_id"));
                             field.setFieldLocation(fieldObject.getString("location"));
                             field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
-                            field.setFieldIrrigationDate(fieldObject.getString("irrigation_date"));
+                            field.setFieldNextIrrigationDate(fieldObject.getString("next_irrigation_date"));
                             
                             fieldArrayList.add(field);
                         }

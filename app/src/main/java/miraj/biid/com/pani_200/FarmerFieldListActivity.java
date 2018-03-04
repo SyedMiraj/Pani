@@ -93,7 +93,10 @@ public class FarmerFieldListActivity extends AppCompatActivity {
                             field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
                             field.setLspId(fieldObject.getString("lsp_id"));
                             field.setIrrigationDone(fieldObject.getString("irrigation_done").equals("1") ? true : false);
-//                            field.setRequestedReSchedule(fieldObject.getString("reschedule").equals("1") ? true : false);
+                            if(fieldObject.getString("prev_irrigation_date") != "null")
+                            field.setFieldPrevIrrigationDate(fieldObject.getString("prev_irrigation_date"));
+                            if(fieldObject.getString("next_irrigation_date") != "null")
+                            field.setFieldNextIrrigationDate(fieldObject.getString("next_irrigation_date"));
                             field.setIrrigationOff(fieldObject.getString("irrigation_off").equals("1")?true:false);
                             fieldList.add(field);
                         }

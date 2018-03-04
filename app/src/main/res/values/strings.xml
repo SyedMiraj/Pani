@@ -81,7 +81,12 @@
     <string name="fil_irrComp">"সেচ শেষ হয়েছে ?"</string>
     <string name="fil_updateField">"জমির অবস্থান আপডেট করুন"</string>
     <string name="fil_delete">"বাতিল করুন"</string>
+    <string name="fil_prev_irrigation_txt">"পূর্ববর্তী সেচের তারিখ নির্বাচন করুন"</string>
+    <string name="fil_prev_irrigation">"পূর্ববর্তী সেচের তারিখ"</string>
+    <string name="fil_next_irrigation_txt">"পরবর্তী সেচের তারিখ নির্বাচন করুন"</string>
+    <string name="fil_next_irrigation">"পরবর্তী সেচের তারিখ"</string>
     <string name="fil_save">"সংরক্ষণ করুন"</string>
+
     <string name="computing">গণনা চলছে</string>
     <string name="pal_photo_select">ছবি নির্বাচন</string>
     <string name="pal_photo_analyze">বিশ্লেষন</string>

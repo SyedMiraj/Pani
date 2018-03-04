@@ -134,6 +134,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     }
 
     private void uploadImageActivity(List<String> imageList) {
+        uploadBtn.setClickable(false);
         String url = "http://bijoya.org/public/api/fields_image";
         if(imageList != null){
             for(String imagePath : imageList){

@@ -62,7 +62,7 @@ public class SingleScheduleFragment extends Fragment{
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy'-'MM'-'dd");
         for (int i = 0; i < LSPScheduleActivity.fieldArrayList.size(); i++) {
             try {
-                Date date = dateFormat.parse(LSPScheduleActivity.fieldArrayList.get(i).getFieldIrrigationDate());
+                Date date = dateFormat.parse(LSPScheduleActivity.fieldArrayList.get(i).getFieldNextIrrigationDate());
                 Date currentDate = calendar.getTime();
                 if (dateFormat.format(currentDate).equals(dateFormat.format(date))) {
                     fields.add(LSPScheduleActivity.fieldArrayList.get(i));
@@ -115,7 +115,6 @@ public class SingleScheduleFragment extends Fragment{
         final Button setIrriDateBtn= (Button) dialog.findViewById(R.id.lspNextIrrigationDateBtn);
         Button saveIrriDateBtn= (Button) dialog.findViewById(R.id.lspSaveNextIrrigationBtn);
 
-        suggestionTv.setText(field.getSuggestion());
         fieldName.setText(field.getFieldName());
         farmerName.setText(field.getFarmerName());
         farmerAddress.setText(field.getFarmerAddress());
@@ -148,14 +147,6 @@ public class SingleScheduleFragment extends Fragment{
                 showNewIrrigationDialog(field);
             }
         });
-
-//        rescheduleBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                dialog.dismiss();
-//                requestReschedule(field.getFieldId());
-//            }
-//        });
 
         setIrriDateBtn.setOnClickListener(new View.OnClickListener() {
             @Override

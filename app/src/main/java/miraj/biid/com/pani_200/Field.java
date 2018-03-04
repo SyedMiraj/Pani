@@ -15,12 +15,12 @@ public class Field {
     private String lspId;
     private String fieldLocation;
     private String fieldSowingDate;
-    private String fieldIrrigationDate;
+    private String fieldPrevIrrigationDate;
+    private String fieldNextIrrigationDate;
     private String fieldLspPhoneNumber;
     private boolean irrigationDone;
     private boolean requestedReSchedule;
     private boolean irrigationOff;
-    private String suggestion;
 
     public String getFieldId() {
         return fieldId;
@@ -94,12 +94,20 @@ public class Field {
         this.fieldSowingDate = fieldSowingDate;
     }
 
-    public String getFieldIrrigationDate() {
-        return fieldIrrigationDate;
+    public String getFieldPrevIrrigationDate() {
+        return fieldPrevIrrigationDate;
     }
 
-    public void setFieldIrrigationDate(String fieldIrrigationDate) {
-        this.fieldIrrigationDate = fieldIrrigationDate;
+    public void setFieldPrevIrrigationDate(String fieldPrevIrrigationDate) {
+        this.fieldPrevIrrigationDate = fieldPrevIrrigationDate;
+    }
+
+    public String getFieldNextIrrigationDate() {
+        return fieldNextIrrigationDate;
+    }
+
+    public void setFieldNextIrrigationDate(String fieldNextIrrigationDate) {
+        this.fieldNextIrrigationDate = fieldNextIrrigationDate;
     }
 
     public String getFieldLspPhoneNumber() {
@@ -132,13 +140,5 @@ public class Field {
 
     public void setIrrigationOff(boolean irrigationOff) {
         this.irrigationOff = irrigationOff;
-    }
-
-    public String getSuggestion() {
-        return suggestion;
-    }
-
-    public void setSuggestion(String suggestion) {
-        this.suggestion = suggestion;
     }
 }

@@ -188,8 +188,6 @@ public class LSPFieldListActivity extends AppCompatActivity{
         TextView suggestionTv= (TextView) dialog.findViewById(R.id.lspSuggestionTv);
         final Button setIrriDateBtn= (Button) dialog.findViewById(R.id.lspNextIrrigationDateBtn);
         Button saveIrriDateBtn= (Button) dialog.findViewById(R.id.lspSaveNextIrrigationBtn);
-
-        suggestionTv.setText(field.getSuggestion());
         fieldName.setText(field.getFieldName());
         farmerName.setText(field.getFarmerName());
         farmerAddress.setText(field.getFarmerAddress());

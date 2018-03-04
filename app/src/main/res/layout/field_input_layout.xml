@@ -77,15 +77,30 @@
                 android:textColor="#fff"
                 android:textSize="15sp"
                 android:padding="3dp"
-                android:text="সেচের তারিখ নির্বাচন করুন"/>
+                android:text="@string/fil_prev_irrigation_txt"/>
             <Button
-                android:id="@+id/fieldIrrigationDateBtn"
+                android:id="@+id/fieldPrevIrrigationDateBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#fff"
                 android:padding="5dp"
                 android:layout_marginBottom="4dp"
-                android:text="সেচের তারিখ"/>
+                android:text="@string/fil_prev_irrigation"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:textSize="15sp"
+                android:padding="3dp"
+                android:text="@string/fil_next_irrigation_txt"/>
+            <Button
+                android:id="@+id/fieldNextIrrigationDateBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fff"
+                android:padding="5dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/fil_next_irrigation"/>
             <LinearLayout
               android:id="@+id/fieldViewDetailsLayout"
               android:layout_width="match_parent"
@@ -115,15 +130,15 @@
                       android:checked="true"
                       android:textOff="@string/fil_irrOn"/>
                 </LinearLayout>
-                <CheckBox
-                  android:id="@+id/fieldDetailsIrrigationDoneRadioBtn"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:textColor="#fff"
-                  android:padding="10dp"
-                  android:textSize="18sp"
-                  android:textStyle="bold"
-                  android:text="@string/fil_irrComp"/>
+                <!--<CheckBox-->
+                  <!--android:id="@+id/fieldDetailsIrrigationDoneRadioBtn"-->
+                  <!--android:layout_width="wrap_content"-->
+                  <!--android:layout_height="wrap_content"-->
+                  <!--android:textColor="#fff"-->
+                  <!--android:padding="10dp"-->
+                  <!--android:textSize="18sp"-->
+                  <!--android:textStyle="bold"-->
+                  <!--android:text="@string/fil_irrComp"/>-->
             </LinearLayout>
         </LinearLayout>
         <Button
