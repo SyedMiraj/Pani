@@ -97,7 +97,6 @@ public class FarmerFieldListActivity extends AppCompatActivity {
                             field.setFieldPrevIrrigationDate(fieldObject.getString("prev_irrigation_date"));
                             if(fieldObject.getString("next_irrigation_date") != "null")
                             field.setFieldNextIrrigationDate(fieldObject.getString("next_irrigation_date"));
-                            field.setIrrigationOff(fieldObject.getString("irrigation_off").equals("1")?true:false);
                             fieldList.add(field);
                         }
                     }

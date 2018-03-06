@@ -125,20 +125,11 @@
                       android:layout_width="0dp"
                       android:layout_weight="1"
                       android:layout_height="match_parent"
-                      android:textOn="@string/fil_irrOff"
-                      android:padding="5dp"
                       android:checked="true"
-                      android:textOff="@string/fil_irrOn"/>
+                      android:textOn="@string/fil_irrOn"
+                      android:padding="5dp"
+                      android:textOff="@string/fil_irrOff"/>
                 </LinearLayout>
-                <!--<CheckBox-->
-                  <!--android:id="@+id/fieldDetailsIrrigationDoneRadioBtn"-->
-                  <!--android:layout_width="wrap_content"-->
-                  <!--android:layout_height="wrap_content"-->
-                  <!--android:textColor="#fff"-->
-                  <!--android:padding="10dp"-->
-                  <!--android:textSize="18sp"-->
-                  <!--android:textStyle="bold"-->
-                  <!--android:text="@string/fil_irrComp"/>-->
             </LinearLayout>
         </LinearLayout>
         <Button

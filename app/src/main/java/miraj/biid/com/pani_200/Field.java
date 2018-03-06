@@ -19,8 +19,6 @@ public class Field {
     private String fieldNextIrrigationDate;
     private String fieldLspPhoneNumber;
     private boolean irrigationDone;
-    private boolean requestedReSchedule;
-    private boolean irrigationOff;
 
     public String getFieldId() {
         return fieldId;
@@ -126,19 +124,4 @@ public class Field {
         this.irrigationDone = irrigationDone;
     }
 
-    public boolean isRequestedReSchedule() {
-        return requestedReSchedule;
-    }
-
-    public void setRequestedReSchedule(boolean requestedReSchedule) {
-        this.requestedReSchedule = requestedReSchedule;
-    }
-
-    public boolean isIrrigationOff() {
-        return irrigationOff;
-    }
-
-    public void setIrrigationOff(boolean irrigationOff) {
-        this.irrigationOff = irrigationOff;
-    }
 }

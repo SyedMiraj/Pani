@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,9 +39,13 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,11 +138,11 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         startActivityForResult(intent,GALLERY_REQUEST);
     }
 
-    private void uploadImageActivity(List<String> imageList) {
+    private void uploadImageActivity(final List<String> imageList) {
         uploadBtn.setClickable(false);
         String url = "http://bijoya.org/public/api/fields_image";
         if(imageList != null){
-            for(String imagePath : imageList){
+            for(final String imagePath : imageList){
                 try{
                     Bitmap bitmap = PhotoLoader.init().from(imagePath).requestSize(512,512).getBitmap();
                     final String encodedString = ImageBase64.encode(bitmap);
@@ -157,6 +162,8 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                             Map<String, String> params =  new HashMap<String, String>();
                             params.put("image",encodedString);
                             params.put("field_id",fieldId);
+                            params.put("index", String.valueOf(imageList.indexOf(imagePath) + 1));
+                            params.put("date", getMetaDateOfImage(imagePath));
                             return params;
                         }
                     };
@@ -442,5 +449,17 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                 }
             });
         }
+    }
+
+    public String getMetaDateOfImage(String stringPath){
+        DateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        if(stringPath != null){
+            File file = new File(stringPath);
+            if(file != null){
+                Date date = new Date(file.lastModified());
+                return dateFormat.format(date);
+            }
+        }
+        return null;
     }
 }
