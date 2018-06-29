@@ -100,9 +100,6 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
                         .show();
             }else{
                 googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                if(fieldLocation != null){
-                    centerMapOnMyLand();
-                }else
                     centerMapOnMyLocation();
             }
 
@@ -110,9 +107,14 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
             if(fieldLocation != null){
                 String locations[] = fieldLocation.split(";");
                 for(int n=0;n<locations.length;n++){
-                    LatLng latlan=new LatLng(Double.parseDouble(locations[n].split(":")[0]),Double.parseDouble(locations[n].split(":")[1]));
-                    rectOptions.add(latlan);
-                    googleMap.addPolygon(rectOptions);
+                    String latitude = locations[n].split(":")[0];
+                    String longitude = locations[n].split(":")[1];
+                    selectedPoints.add(new LatLng(Double.parseDouble(latitude),Double.parseDouble(longitude)));
+                    if(latitude != null && longitude != null){
+                        LatLng latlan=new LatLng(Double.parseDouble(latitude),Double.parseDouble(longitude));
+                        rectOptions.add(latlan);
+                        googleMap.addPolygon(rectOptions);
+                    }
                 }
             }
         }
@@ -173,18 +175,4 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap=googleMap;
     }
-
-    private void centerMapOnMyLand() {
-        if(fieldLocation != null){
-            String locations[] = fieldLocation.split(";");
-            if(locations.length > 0){
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.valueOf(locations[0].split(":")[0]), Double.valueOf(locations[0].split(":")[1])),
-                        18)); // animating camera to that location
-                Toast.makeText(this, this.getString(R.string.zooming), Toast.LENGTH_SHORT).show();
-            }
-        }else{
-            Util.showToast(this,"Problem show current land location");
-        }
-    }
-
 }

@@ -120,6 +120,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         submitBtn.setOnClickListener(this);
         viewOnMapBtn.setOnClickListener(this);
         fieldPrevIrrigationDateBtn.setOnClickListener(this);
+        fieldNextIrrigationDateBtn.setOnClickListener(this);
     }
 
     @Override
@@ -151,7 +152,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
                         if (lspNameSp.getSelectedItemPosition() != 0) {
                             if (sowingDateText != null) {
                                 if (existField == null) {
-                                        sendFieldDetails(fieldNameEt.getText().toString(), cropNameSp.getSelectedItem().toString(),
+                                        saveFieldDetails(fieldNameEt.getText().toString(), cropNameSp.getSelectedItem().toString(),
                                                 lspArrayList.get(lspNameSp.getSelectedItemPosition()).getId(), sowingDateText,
                                                 prevIrrigationDate, nextIrrigationDate,irrigationDone.isChecked(),User.getUserId());
                                     } else {
@@ -191,6 +192,14 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         params.add("farmer_id", farmerId);
         params.add("field_prev_irri_date", prevIrrigationDateText);
         params.add("field_next_irri_date", nextIrrigationDateText);
+        String location = "";
+        for (int i = 0; i < AddFieldsActivity.selectedPoints.size(); i++) {
+            location += AddFieldsActivity.selectedPoints.get(i).latitude + ":" + AddFieldsActivity.selectedPoints.get(i).longitude;
+            if (i != AddFieldsActivity.selectedPoints.size() - 1) {
+                location += ";";
+            }
+        }
+        params.add("location", location);
 
         httpClient.put("http://bijoya.org/public/api/updatefields", params, new JsonHttpResponseHandler() {
             @Override
@@ -236,7 +245,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
      * @param lsp_id            assigned lsp id
      * @param sowingDateText    field sowing date
      */
-    private void sendFieldDetails(String fieldName, String cropName, String lsp_id, String sowingDateText, String prevIrriDate,
+    private void saveFieldDetails(String fieldName, String cropName, String lsp_id, String sowingDateText, String prevIrriDate,
                                   String nextIrriDate,boolean irrigationDone,String farmerId){
         SharedPreferences sharedPreferences =
                 getApplicationContext().getSharedPreferences(getString(R.string.FCM_PREF), Context.MODE_PRIVATE);
@@ -260,7 +269,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         }
         params.add("location", location);
 
-        httpClient.post("http://bijoya.org/public/api/add_fields", params, new JsonHttpResponseHandler() {
+        httpClient.post("http://www.pani-gca.net/public/index.php/api/add_fields", params, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -333,7 +342,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
      * Getting all lsp's list
      */
     private void getAllLsps() {
-        httpClient.get("http://bijoya.org/public/api/lsps", null, new JsonHttpResponseHandler() {
+        httpClient.get("http://www.pani-gca.net/public/index.php/api/lsps", null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();

@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }else {
             params.put("lsp","1");
         }
-        httpClient.post("http://www.bijoya.org/public/api/users/login", params, new JsonHttpResponseHandler() {
+        httpClient.post("http://www.pani-gca.net/public/index.php/api/users/login", params, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();

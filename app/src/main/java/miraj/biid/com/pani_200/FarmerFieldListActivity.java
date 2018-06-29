@@ -69,7 +69,7 @@ public class FarmerFieldListActivity extends AppCompatActivity {
      * Getting all the user field list from the user
      */
     private void getAllFields() {
-        httpClient.get("http://bijoya.org/public/api/fields_by_farmer/"+User.getUserId(), new JsonHttpResponseHandler() {
+        httpClient.get("http://www.pani-gca.net/public/index.php/api/fields_by_farmer/"+User.getUserId(), new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();
