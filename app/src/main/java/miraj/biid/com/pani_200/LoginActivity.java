@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 import miraj.biid.com.pani_200.callback.PermissionCallback;
 import miraj.biid.com.pani_200.callback.TaskPerformCallback;
+import miraj.biid.com.pani_200.exceptions.PositionNotFoundException;
 import miraj.biid.com.pani_200.helpers.GPSTracker;
 import miraj.biid.com.pani_200.helpers.HTTPHelper;
 import miraj.biid.com.pani_200.utils.PrefUtils;
@@ -40,7 +41,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     boolean farmer;
     ImageView headerImg;
     EditText phnNumberEt,passwordEt;
-    Button loginBtn,newUserBtn,forgotPasswordBtn;
+    Button loginBtn,newUserBtn;
     AsyncHttpClient httpClient;
     ProgressDialog progressDialog;
     PrefUtils prefUtils;
@@ -49,8 +50,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
-        farmer=getIntent().getBooleanExtra("farmer",false);
-        prefUtils=new PrefUtils(this);
+        farmer = getIntent().getBooleanExtra("farmer",false);
+        prefUtils = new PrefUtils(this);
         init();
 
         checkReqPermissions(new PermissionCallback() {
@@ -73,16 +74,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * Initializing all the global variables
      */
     private void init() {
-        progressDialog= Util.getProgressDialog(this,"Please wait...");
+        progressDialog= Util.getProgressDialog(this, getApplicationContext().getString(R.string.loading));
         httpClient= HTTPHelper.getHTTPClient();
         headerImg= (ImageView) findViewById(R.id.loginHeaderImg);
         phnNumberEt= (EditText) findViewById(R.id.loginPhnNumberEt);
         passwordEt= (EditText) findViewById(R.id.loginPasswordEt);
         loginBtn= (Button) findViewById(R.id.loginBtn);
         newUserBtn= (Button) findViewById(R.id.loginNewUserBtn);
-        forgotPasswordBtn= (Button) findViewById(R.id.forgotPasswordBtn);
+//        forgotPasswordBtn= (Button) findViewById(R.id.forgotPasswordBtn);
 
-        forgotPasswordBtn.setOnClickListener(this);
+//        forgotPasswordBtn.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
         newUserBtn.setOnClickListener(this);
         if(farmer)
@@ -105,9 +106,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 intent.putExtra("farmer",farmer);
                 startActivity(intent);
                 break;
-            case R.id.forgotPasswordBtn:
-                showForgotPasswordDialog();
-                break;
+//            case R.id.forgotPasswordBtn:
+//                showForgotPasswordDialog();
+//                break;
         }
     }
 
@@ -138,7 +139,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 super.onSuccess(statusCode, headers, response);
                 try {
                     if(response.getInt("status")==200 && response.getInt("success")==1){
-                        Util.showToast(getApplicationContext(),"Login Successful");
                         Intent intent=null;
                         User.setUserId(response.getString("user_id"));
                         User.setName(response.getString("name"));
@@ -221,21 +221,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         RequestParams params=new RequestParams();
         params.add("user_id",userId);
         params.add("position",gpsTracker.getLatitude()+";"+gpsTracker.getLongitude());
-        final ProgressDialog dialog=Util.getProgressDialog(this,"Please wait...");
-        httpClient.put("http://bijoya.org/public/api/user/updateposition",params,new JsonHttpResponseHandler(){
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                dialog.show();
+        try{
+            if(gpsTracker.getLatitude() == 0.0 && gpsTracker.getLongitude() == 0.0){
+                throw new PositionNotFoundException(getApplication().getString(R.string.position_not_updated));
             }
+            final ProgressDialog dialog=Util.getProgressDialog(this,"Please wait...");
+            httpClient.put("http://www.pani-gca.net/public/index.php/api/user/updateposition",params,new JsonHttpResponseHandler(){
 
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                dialog.dismiss();
-                taskPerformCallback.onComplete();
-            }
-        });
+                @Override
+                public void onStart() {
+                    super.onStart();
+                    dialog.show();
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    dialog.dismiss();
+                    taskPerformCallback.onComplete();
+                }
+            });
+        }catch(PositionNotFoundException e){
+            Util.showToast(LoginActivity.this, e.getMessage().toString());
+        }
+
     }
 }

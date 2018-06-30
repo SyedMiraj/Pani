@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
+import miraj.biid.com.pani_200.exceptions.BaseException;
 import miraj.biid.com.pani_200.helpers.HTTPHelper;
 import miraj.biid.com.pani_200.utils.Util;
 
@@ -46,14 +47,14 @@ public class FarmerFieldListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.field_list_layout);
-        Toolbar toolbar= (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        noFieldListTextView= (TextView) findViewById(R.id.noFieldTextView);
+        noFieldListTextView = (TextView) findViewById(R.id.noFieldTextView);
         context=this;
-        progressDialog= Util.getProgressDialog(context,this.getString(R.string.loading));
-        httpClient= HTTPHelper.getHTTPClient();
-        fieldListView= (ListView) findViewById(R.id.fieldListView);
+        progressDialog = Util.getProgressDialog(context,this.getString(R.string.loading));
+        httpClient = HTTPHelper.getHTTPClient();
+        fieldListView = (ListView) findViewById(R.id.fieldListView);
         getAllFields();
         fieldListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -69,57 +70,61 @@ public class FarmerFieldListActivity extends AppCompatActivity {
      * Getting all the user field list from the user
      */
     private void getAllFields() {
-        httpClient.get("http://www.pani-gca.net/public/index.php/api/fields_by_farmer/"+User.getUserId(), new JsonHttpResponseHandler() {
-            @Override
-            public void onStart() {
-                super.onStart();
-                progressDialog.show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                try {
-                    fieldList=new ArrayList<Field>();
-                    if(response.getInt("success")==1){
-                        JSONArray fieldsArray=response.getJSONArray("fields");
-                        for (int i=0;i<fieldsArray.length();i++){
-                            JSONObject fieldObject=fieldsArray.getJSONObject(i);
-                            Field field=new Field();
-                            field.setFieldId(fieldObject.getString("field_id"));
-                            field.setFieldName(fieldObject.getString("field_name"));
-                            field.setCropName(fieldObject.getString("crop_name"));
-                            field.setFieldLocation(fieldObject.getString("location"));
-                            field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
-                            field.setLspId(fieldObject.getString("lsp_id"));
-                            field.setIrrigationDone(fieldObject.getString("irrigation_done").equals("1") ? true : false);
-                            if(fieldObject.getString("prev_irrigation_date") != "null")
-                            field.setFieldPrevIrrigationDate(fieldObject.getString("prev_irrigation_date"));
-                            if(fieldObject.getString("next_irrigation_date") != "null")
-                            field.setFieldNextIrrigationDate(fieldObject.getString("next_irrigation_date"));
-                            fieldList.add(field);
-                        }
-                    }
-                    fieldListView.setAdapter(new FieldListAdapter());
-                    if(fieldList.size()!=0)
-                        noFieldListTextView.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        try{
+            httpClient.get("http://www.pani-gca.net/public/index.php/api/fields_by_farmer/" + User.getUserId(), new JsonHttpResponseHandler() {
+                @Override
+                public void onStart() {
+                    super.onStart();
+                    progressDialog.show();
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Util.printDebug("Farmer field fail", statusCode + "");
-            }
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    try {
+                        fieldList = new ArrayList<Field>();
+                        if(response.getInt("success") == 1){
+                            JSONArray fieldsArray=response.getJSONArray("fields");
+                            for (int i=0;i<fieldsArray.length();i++){
+                                JSONObject fieldObject=fieldsArray.getJSONObject(i);
+                                Field field=new Field();
+                                field.setFieldId(fieldObject.getString("field_id"));
+                                field.setFieldName(fieldObject.getString("field_name"));
+                                field.setCropName(fieldObject.getString("crop_name"));
+                                field.setFieldLocation(fieldObject.getString("location"));
+                                field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
+                                field.setLspId(fieldObject.getString("lsp_id"));
+                                field.setIrrigationDone(fieldObject.getString("irrigation_done").equals("1") ? true : false);
+                                if(fieldObject.getString("prev_irrigation_date") != "null")
+                                    field.setFieldPrevIrrigationDate(fieldObject.getString("prev_irrigation_date"));
+                                if(fieldObject.getString("next_irrigation_date") != "null")
+                                    field.setFieldNextIrrigationDate(fieldObject.getString("next_irrigation_date"));
+                                fieldList.add(field);
+                            }
+                        }
+                        fieldListView.setAdapter(new FieldListAdapter());
+                        if(fieldList.size()!=0)
+                            noFieldListTextView.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                progressDialog.dismiss();
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    progressDialog.dismiss();
+                }
+            });
+        }catch(BaseException b){
+            Util.showToast(getApplicationContext(), b.getMessage().toString());
+        }
+
     }
 
     /**
@@ -144,15 +149,15 @@ public class FarmerFieldListActivity extends AppCompatActivity {
 
         @Override
         public View getView(final int i, View view, ViewGroup viewGroup) {
-            View row=getLayoutInflater().inflate(R.layout.field_list_row,null,false);
-            TextView fieldTitle= (TextView) row.findViewById(R.id.fieldTitle);
+            View row = getLayoutInflater().inflate(R.layout.field_list_row,null,false);
+            TextView fieldTitle = (TextView) row.findViewById(R.id.fieldTitle);
             fieldTitle.setText(fieldList.get(i).getFieldName());
-            ImageButton notifications= (ImageButton) row.findViewById(R.id.FarmerFieldListCallImgBtn);
-            ImageButton imageAnalysis= (ImageButton) row.findViewById(R.id.update_field_with_image);
+            ImageButton notifications = (ImageButton) row.findViewById(R.id.FarmerFieldListCallImgBtn);
+            ImageButton imageAnalysis = (ImageButton) row.findViewById(R.id.update_field_with_image);
             notifications.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getApplicationContext(),ViewAlertMessage.class);
+                    Intent intent = new Intent(getApplicationContext(),ViewAlertMessage.class);
                     intent.putExtra("field",fieldList.get(i).getFieldId());
                     startActivity(intent);
                 }
@@ -160,7 +165,7 @@ public class FarmerFieldListActivity extends AppCompatActivity {
             imageAnalysis.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getApplicationContext(),ImageUploading.class);
+                    Intent intent = new Intent(getApplicationContext(),ImageUploading.class);
                     intent.putExtra("fieldId",fieldList.get(i).getFieldId());
                     startActivity(intent);
                 }

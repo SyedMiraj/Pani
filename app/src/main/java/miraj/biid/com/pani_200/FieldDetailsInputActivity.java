@@ -201,7 +201,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         }
         params.add("location", location);
 
-        httpClient.put("http://bijoya.org/public/api/updatefields", params, new JsonHttpResponseHandler() {
+        httpClient.put("http://www.pani-gca.net/public/index.php/api/updatefields", params, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -359,17 +359,23 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
                         lspArrayList = new ArrayList<>();
                         LSP firstLsp = new LSP("-1", "Please select a lsp", User.getPosition());
                         lspArrayList.add(firstLsp);
-                        for (int i = 0; i < lspArray.length(); i++) {
-                            JSONObject lspObject = lspArray.getJSONObject(i);
-                            LSP lsp = new LSP(lspObject.getString("id"), lspObject.getString("user_name"), lspObject.getString("position"));
-                            lspArrayList.add(lsp);
-                        }
 
                         Collections.sort(lspArrayList, new Comparator<LSP>() {
                             public int compare(LSP lsp1, LSP lsp2) {
                                 return (int) (lsp1.getDistance() - lsp2.getDistance());
                             }
                         });
+
+                        int maxNumberOfLsp = 10;
+                        if(lspArray.length() < 10){
+                            maxNumberOfLsp = lspArray.length();
+                        }
+                        for (int i = 0; i < maxNumberOfLsp; i++) {
+                            JSONObject lspObject = lspArray.getJSONObject(i);
+                            LSP lsp = new LSP(lspObject.getString("id"), lspObject.getString("user_name"), lspObject.getString("position"));
+                            lspArrayList.add(lsp);
+                        }
+
 
                         lspNameSp.setAdapter(new ArrayAdapter<LSP>(FieldDetailsInputActivity.this, R.layout.spinner_item, R.id.spinnerItem, lspArrayList));
 

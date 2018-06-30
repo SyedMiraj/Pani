@@ -1,16 +1,26 @@
 package miraj.biid.com.pani_200;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,6 +49,7 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -49,6 +60,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
 import miraj.biid.com.pani_200.helpers.HTTPHelper;
@@ -73,8 +85,11 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     private ProgressDialog progressDialog;
     private final int GALLERY_REQUEST = 1200;
     private final int CAMERA_REQUEST = 1500;
+    private final int CAMERA_REQUEST_GREATER_VERSION_API = 900;
+    public final String APP_TAG = "PaniApplication";
     List<String> imageList =  new ArrayList<String>();
     AsyncHttpClient httpClient;
+    File fileProvide;
     Context context;
 
     @Override
@@ -126,8 +141,20 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
 
     private void imageCapturing(){
         try {
-            startActivityForResult(cameraPhoto.takePhotoIntent(),CAMERA_REQUEST);
-            cameraPhoto.addToGallery();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) ==
+                        PackageManager.PERMISSION_GRANTED){
+                    captureImageForGreaterVersionAPI();
+                }else{
+                    if(shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)){
+                        Util.showToast(getApplicationContext(), getApplicationContext().getString(R.string.camera_permission));
+                    }
+                    requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_REQUEST_GREATER_VERSION_API);
+                }
+            }else {
+                startActivityForResult(cameraPhoto.takePhotoIntent(), CAMERA_REQUEST);
+                cameraPhoto.addToGallery();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -140,7 +167,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
 
     private void uploadImageActivity(final List<String> imageList) {
         uploadBtn.setClickable(false);
-        String url = "http://bijoya.org/public/api/fields_image";
+        String url = "http://www.pani-gca.net/public/index.php/api/fields_image";
         if(imageList != null){
             for(final String imagePath : imageList){
                 try{
@@ -149,12 +176,12 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                     StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Toast.makeText(getApplicationContext(),"Image Upload Successful",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),(imageList.indexOf(imagePath) + 1)+"/"+imageList.size()+ getApplicationContext().getString(R.string.upload_image),Toast.LENGTH_SHORT).show();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(),"Image Upload Failed",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.failed_image),Toast.LENGTH_SHORT).show();
                         }
                     }){
                         @Override
@@ -292,22 +319,47 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         if(resultCode == RESULT_OK){
             if(requestCode == CAMERA_REQUEST){
                 String photoPath = cameraPhoto.getPhotoPath();
-                addImageToInterface(photoPath);
+                addImageToInterface(photoPath, false);
             }
             if(requestCode == GALLERY_REQUEST && data.getData() != null){
                 Uri uri = data.getData();
                 galleryPhoto.setPhotoUri(uri);
                 String photoPath = galleryPhoto.getPath();
-                addImageToInterface(photoPath);
+                addImageToInterface(photoPath, false);
+            }
+            if(requestCode == CAMERA_REQUEST_GREATER_VERSION_API){
+//                Bundle bundle = data.getExtras();
+//                Bitmap bitmap = (Bitmap) bundle.get("data");
+//                Uri tempUri = getImageUri(getApplicationContext(), bitmap);
+//                File finalFile = new File(getRealPathFromURI(tempUri));
+                addImageToInterface(fileProvide.getAbsolutePath(), true);
+                fileProvide = null;
             }
         }
     }
 
-    public void addImageToInterface(final String imagePath){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if(requestCode == CAMERA_REQUEST_GREATER_VERSION_API){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+            grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                captureImageForGreaterVersionAPI();
+            }
+        }else{
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public void addImageToInterface(final String imagePath, boolean higherVersion){
         if(imagePath != null){
             imageList.add(imagePath);
             try {
-                Bitmap bitmap = PhotoLoader.init().from(imagePath).requestSize(512, 512).getBitmap();
+                Bitmap bitmap = null;
+                if(!higherVersion) {
+                  bitmap =  PhotoLoader.init().from(imagePath).requestSize(512, 512).getBitmap();
+                }else{
+                    bitmap = BitmapFactory.decodeFile(imagePath);
+                }
                 imageView = new ImageView(getApplicationContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT);
@@ -327,6 +379,8 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                            public void onClick(DialogInterface dialog, int which) {
                                 linearImage.removeViewAt(imageList.indexOf(imagePath));
                                 imageList.remove(imagePath);
+                                if(imageList.size() < 16)
+                                    addImg.setEnabled(true);
                            }
                        });
                         alertDialog.setNegativeButton("না", new DialogInterface.OnClickListener() {
@@ -394,6 +448,10 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
             } else if (imageList.size() == 15) {
                 MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.fiftin);
                 mPlayer.start();
+            }else if (imageList.size() == 16) {
+                MediaPlayer mPlayer = MediaPlayer.create(getApplicationContext(), R.raw.sixteen);
+                mPlayer.start();
+                addImg.setEnabled(false);
             }
         }catch (Exception e)
         {
@@ -418,7 +476,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
             params.add("field_id", fieldId);
             params.add("gca_value", value);
 
-            httpClient.post("http://bijoya.org/public/api/field_value", params, new JsonHttpResponseHandler() {
+            httpClient.post("http://www.pani-gca.net/public/index.php/api/field_value", params, new JsonHttpResponseHandler() {
                 @Override
                 public void onStart() {
                     super.onStart();
@@ -462,4 +520,23 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         }
         return null;
     }
+
+    public void captureImageForGreaterVersionAPI(){
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fileProvide = getPhotoFileUri("img_field_" + fieldId + "_" + new Random().nextInt(999)+".jpg");
+        String auth = getApplicationContext().getPackageName() + ".fileprovider";
+        Uri fileProvider = FileProvider.getUriForFile(ImageUploading.this, auth, fileProvide);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, CAMERA_REQUEST_GREATER_VERSION_API);
+        }
+    }
+
+    // Returns the File for a photo stored on disk given the fileName
+    public File getPhotoFileUri(String fileName) {
+        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
+        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
+        return file;
+    }
+
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/popup_editprofile"
-          android:title="@string/popup_edit_profile"
-          />
+    <!--<item android:id="@+id/popup_editprofile"-->
+          <!--android:title="@string/popup_edit_profile"-->
+          <!--/>-->
     <item android:id="@+id/popup_logout"
           android:title="@string/popup_logout"
           />

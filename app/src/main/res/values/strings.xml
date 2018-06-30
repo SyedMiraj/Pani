@@ -132,5 +132,18 @@
     <string name="iu_field_image">জমির ছবি</string>
 
     <string name="result">রেজাল্ট দেখুন</string>
+    <string name="position_not_updated">আপনার বর্তমান অবস্থান পাওয়া যাচ্ছে না</string>
     <string name="upload">আপলোড করুন</string>
+    <string name="regi_mobile">দয়া করে মোবাইল নাম্বার লিখুন</string>
+    <string name="regi_password">দয়া করে পাসওয়ার্ড লিখুন</string>
+    <string name="regi_name">দয়া করে আপনার নাম লিখুন </string>
+    <string name="regi_address"> দয়া করে ঠিকানা লিখুন</string>
+    <string name="regi_pump_type"> দয়া করে পাম্পের ধরন লিখুন</string>
+    <string name="regi_pump_capacity">দয়া করে পাম্পের ক্ষমতা লিখুন</string>
+    <string name="regi_not_match"> পাসওয়ার্ড ও নিশ্চিতকরন পাসওয়ার্ড এক নয়</string>
+    <string name="excuse">অসুবিধার জন্য দুঃখিত !!!!</string>
+    <string name="camera_permission">ক্যামেরা ব্যবহারের জন্য অনুমতি প্রয়োজন</string>
+    <string name="upload_image">" টি ছবি আপলোড হয়েছে"</string>
+    <string name="failed_image">" ছবি আপলোড হয় নাই"</string>
+
 </resources>

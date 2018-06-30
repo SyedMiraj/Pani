@@ -129,7 +129,7 @@ public class LspViewMapActivity extends AppCompatActivity implements GoogleMap.O
         RequestParams params=new RequestParams();
         params.add("lsp_id",User.getUserId());
         params.add("irrigation_done","0");
-        httpClient.get("http://bijoya.org/public/api/fields_by_lsp_for_schedule",params,new JsonHttpResponseHandler(){
+        httpClient.post("http://www.pani-gca.net/public/index.php/api/fields_by_lsp_for_schedule",params,new JsonHttpResponseHandler(){
             @Override
             public void onStart() {
                 super.onStart();

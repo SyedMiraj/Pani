@@ -56,55 +56,59 @@ public class ViewAlertMessage extends AppCompatActivity{
     }
 
     private void getAllMessages() {
-        RequestParams param=new RequestParams();
-        param.add("farmer_id",User.getUserId());
-        param.add("field_id",fieldId);
-        httpClient.post("http://bijoya.org/public/api/notification_messages",param, new JsonHttpResponseHandler() {
-            @Override
-            public void onStart() {
-                super.onStart();
-                progressDialog.show();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-                try {
-                    messages=new ArrayList<AlertMessages>();
-                    if(response.getInt("success")==1){
-                        JSONArray messagesArray=response.getJSONArray("alert");
-                        for (int i=0;i<messagesArray.length();i++){
-                            JSONObject messageObject=messagesArray.getJSONObject(i);
-                            AlertMessages alertMessages=new AlertMessages();
-                            String date=messageObject.getString("recieve_date");
-                            alertMessages.setDate(date);
-                            String signal=messageObject.getString("signal_irrgation");
-                            //will change the text with required format
-                            alertMessages.setText(signal);
-                           messages.add(alertMessages);
-                        }
-                    }
-                    messageListView.setAdapter(new MessageListAdapter());
-                    if(messages.size()!=0)
-                        noMessageListTextView.setVisibility(View.GONE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        RequestParams param = new RequestParams();
+        param.add("field_id", fieldId);
+        try {
+            httpClient.post("http://www.pani-gca.net/public/index.php/api/notification_messages", param, new JsonHttpResponseHandler() {
+                @Override
+                public void onStart() {
+                    super.onStart();
+                    progressDialog.show();
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-                Util.printDebug("Farmer field fail", statusCode + "");
-            }
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    try {
+                        messages = new ArrayList<AlertMessages>();
+                        if (response.getInt("success") == 1) {
+                            JSONArray messagesArray = response.getJSONArray("alert");
+                            for (int i = 0; i < messagesArray.length(); i++) {
+                                JSONObject messageObject = messagesArray.getJSONObject(i);
+                                AlertMessages alertMessages = new AlertMessages();
+                                String date = messageObject.getString("recieve_date");
+                                alertMessages.setDate(date);
+                                String signal = messageObject.getString("signal_irrgation");
+                                //will change the text with required format
+                                alertMessages.setText(signal);
+                                messages.add(alertMessages);
+                            }
+                        }
+                        messageListView.setAdapter(new MessageListAdapter());
+                        if (messages.size() != 0)
+                            noMessageListTextView.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-            @Override
-            public void onFinish() {
-                super.onFinish();
-                progressDialog.dismiss();
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                    Util.printDebug("Farmer field fail", statusCode + "");
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    progressDialog.dismiss();
+                }
+            });
+        }catch(Exception e){
+            Util.showToast(getApplicationContext(), getApplicationContext().getString(R.string.excuse));
+        }
     }
+
 
     /**
      * Field list adapter

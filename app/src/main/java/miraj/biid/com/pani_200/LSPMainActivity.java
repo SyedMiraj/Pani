@@ -120,11 +120,11 @@ public class LSPMainActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()){
-            case R.id.popup_editprofile:
-                Intent editProfileIntent=new Intent(this,UpdateUserActivity.class);
-                editProfileIntent.putExtra("farmer",true);
-                startActivity(editProfileIntent);
-                break;
+//            case R.id.popup_editprofile:
+//                Intent editProfileIntent=new Intent(this,UpdateUserActivity.class);
+//                editProfileIntent.putExtra("farmer",true);
+//                startActivity(editProfileIntent);
+//                break;
             case R.id.popup_logout:
                 prefUtils.resetPref();
                 startActivity(new Intent(this,StartActivity.class));

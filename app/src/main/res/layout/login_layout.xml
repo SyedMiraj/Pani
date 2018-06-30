@@ -41,23 +41,24 @@
       android:textColor="#fff"
       android:layout_marginLeft="20dp"
       android:layout_marginRight="20dp"
-      android:layout_marginBottom="5dp"
+      android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
       android:text="@string/login_login_btn"/>
-    <Button
-      android:id="@+id/forgotPasswordBtn"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="#2A9A46"
-      android:textColor="#fff"
-      android:padding="5dp"
-      android:layout_marginLeft="20dp"
-      android:layout_marginRight="20dp"
-      android:layout_marginBottom="5dp"
-      android:text="@string/login_forget"/>
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="0dp"
-      android:layout_weight="1"/>
+    <!--<Button-->
+      <!--android:id="@+id/forgotPasswordBtn"-->
+      <!--android:layout_width="match_parent"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:background="#2A9A46"-->
+      <!--android:textColor="#fff"-->
+      <!--android:padding="5dp"-->
+      <!--android:layout_marginLeft="20dp"-->
+      <!--android:layout_marginRight="20dp"-->
+      <!--android:layout_marginBottom="5dp"-->
+      <!--android:text="@string/login_forget"/>-->
+    <!--<LinearLayout-->
+      <!--android:layout_width="wrap_content"-->
+      <!--android:layout_height="0dp"-->
+      <!--android:layout_weight="1"/>-->
     <Button
       android:id="@+id/loginNewUserBtn"
       android:layout_width="match_parent"

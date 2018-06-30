@@ -52,17 +52,17 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String toastText=null;
-                if((toastText=checkTextField(mobilNumberEt.getText().toString(),"Please enter mobile number"))==null){
-                    if((toastText=checkTextField(passwordEt.getText().toString(),"Please enter password"))==null){
+                if((toastText=checkTextField(mobilNumberEt.getText().toString(), getApplicationContext().getString(R.string.reg_mobile)))==null){
+                    if((toastText=checkTextField(passwordEt.getText().toString(),getApplicationContext().getString(R.string.reg_password)))==null){
                         if(passwordEt.getText().toString().equals(confirmPasswordEt.getText().toString())){
-                            if((toastText=checkTextField(nameEt.getText().toString(),"Please enter name"))==null){
+                            if((toastText=checkTextField(nameEt.getText().toString(),getApplicationContext().getString(R.string.reg_name)))==null){
                                 if((toastText=checkTextField(addressEt.getText().toString(),"Please enter address"))==null){
                                     if(farmer){
                                         registerUser(mobilNumberEt.getText().toString(), passwordEt.getText().toString(), nameEt.getText().toString(), addressEt.getText().toString(),null,null,null);
                                     }
                                     else{
-                                        if((toastText=checkTextField(pumpTypeEt.getText().toString(),"Please enter pump type"))==null){
-                                            if((toastText=checkTextField(pumpCapacityEt.getText().toString(),"Please enter pump capacity"))==null){
+                                        if((toastText=checkTextField(pumpTypeEt.getText().toString(),getApplicationContext().getString(R.string.reg_pumpType)))==null){
+                                            if((toastText=checkTextField(pumpCapacityEt.getText().toString(),getApplicationContext().getString(R.string.reg_pumpCapacity)))==null){
                                                 registerUser(mobilNumberEt.getText().toString(), passwordEt.getText().toString(), nameEt.getText().toString(), addressEt.getText().toString()
                                                         ,nationalIdEt.getText().toString(),pumpTypeEt.getText().toString(),pumpCapacityEt.getText().toString());
                                             }
@@ -70,7 +70,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     }
                                 }
                             }
-                        }else toastText="Password and Confirm password doesn't match";
+                        }else toastText= getApplicationContext().getString(R.string.regi_not_match);
                     }
                 }
                 if(toastText!=null)
@@ -96,7 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
         }else{
             params.put("lsp","0");
         }
-        httpClient.post("http://www.bijoya.org/public/api/users",params,new JsonHttpResponseHandler(){
+        httpClient.post("http://www.pani-gca.net/public/index.php/api/users",params,new JsonHttpResponseHandler(){
             @Override
             public void onStart() {
                 super.onStart();
@@ -142,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void init() {
         extraLspInfoLayout= (LinearLayout) findViewById(R.id.registerLspExtraInformationLayout);
-        progressDialog = Util.getProgressDialog(this, "Loading. Please wait...");
+        progressDialog = Util.getProgressDialog(this, getApplicationContext().getString(R.string.loading));
         httpClient = HTTPHelper.getHTTPClient();
         submitBtn = (Button) findViewById(R.id.registerSubmitBtn);
         mobilNumberEt = (EditText) findViewById(R.id.registerMblNumber);

@@ -1,5 +1,6 @@
 package miraj.biid.com.pani_200;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
@@ -73,19 +74,19 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void init() {
-        httpClient= HTTPHelper.getHTTPClient();
-        progressDialog= Util.getProgressDialog(this,this.getString(R.string.loading));
+        httpClient = HTTPHelper.getHTTPClient();
+        progressDialog = Util.getProgressDialog(this,this.getString(R.string.loading));
 
-        polygonClearBtn= (Button) findViewById(R.id.fieldLocationClearBtn);
-        polygonSubmitBtn= (Button) findViewById(R.id.fieldLocationSubmitBtn);
-        addCurrentMarkerBtn= (Button) findViewById(R.id.fieldLocationCurrentBtn);
+        polygonClearBtn = (Button) findViewById(R.id.fieldLocationClearBtn);
+        polygonSubmitBtn = (Button) findViewById(R.id.fieldLocationSubmitBtn);
+        addCurrentMarkerBtn = (Button) findViewById(R.id.fieldLocationCurrentBtn);
         addCurrentMarkerBtn.setOnClickListener(this);
         polygonClearBtn.setOnClickListener(this);
         polygonSubmitBtn.setOnClickListener(this);
-        gpsTracker=new GPSTracker(this);
-        selectedPoints=new ArrayList<>();
+        gpsTracker = new GPSTracker(this);
+        selectedPoints = new ArrayList<>();
         rectOptions = new PolygonOptions();
-        mapMarkers=new ArrayList<>();
+        mapMarkers = new ArrayList<>();
 
     }
 
@@ -111,7 +112,7 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
                     String longitude = locations[n].split(":")[1];
                     selectedPoints.add(new LatLng(Double.parseDouble(latitude),Double.parseDouble(longitude)));
                     if(latitude != null && longitude != null){
-                        LatLng latlan=new LatLng(Double.parseDouble(latitude),Double.parseDouble(longitude));
+                        LatLng latlan = new LatLng(Double.parseDouble(latitude),Double.parseDouble(longitude));
                         rectOptions.add(latlan);
                         googleMap.addPolygon(rectOptions);
                     }
@@ -120,6 +121,7 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void centerMapOnMyLocation() {
         googleMap.setMyLocationEnabled(true);
         final Location location = gpsTracker.getLocation();
@@ -140,14 +142,14 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.fieldLocationClearBtn:
-                if(polygon!=null)polygon.remove();
+                if(polygon != null)polygon.remove();
                 selectedPoints.clear();
                 googleMap.clear();
-                rectOptions=new PolygonOptions();
+                rectOptions = new PolygonOptions();
                 break;
             case R.id.fieldLocationSubmitBtn:
-                if(selectedPoints.size()>=3){
-                    Intent intent=new Intent(this,FieldDetailsInputActivity.class);
+                if(selectedPoints.size() >= 3){
+                    Intent intent = new Intent(this,FieldDetailsInputActivity.class);
                     startActivity(intent);
                     finish();
                 }else
@@ -166,7 +168,7 @@ public class AddFieldsActivity extends AppCompatActivity implements View.OnClick
         MarkerOptions markerOptions=new MarkerOptions().position(latLng);
         mapMarkers.add(markerOptions);
         googleMap.addMarker(markerOptions);
-        if(polygon!=null)
+        if(polygon != null)
             polygon.remove();
         polygon = googleMap.addPolygon(rectOptions);
     }
