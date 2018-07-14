@@ -89,6 +89,7 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
         manageFieldsBtn.setOnClickListener(this);
         callLspBtn.setOnClickListener(this);
         msgLspBtn.setOnClickListener(this);
+        getAllFields();
     }
 
     @Override
@@ -111,12 +112,12 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
                 startActivity(intent);
                 break;
             case R.id.farmerMsgLspBtn:
-                getAllFields();
                 callBtn = false;
+                showFieldListDialog();
                 break;
             case R.id.farmerCallLspBtn:
-                getAllFields();
                 callBtn = true;
+                showFieldListDialog();
                 break;
         }
     }
@@ -146,6 +147,7 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
                                 field.setFieldLocation(fieldObject.getString("location"));
                                 field.setFieldSowingDate(fieldObject.getString("field_sowing_date"));
                                 field.setLspId(fieldObject.getString("lsp_id"));
+                                field.setFieldLspPhoneNumber(fieldObject.getString("mobile_number"));
                                 field.setIrrigationDone(fieldObject.getString("irrigation_done").equals("1") ? true : false);
                                 if(fieldObject.getString("prev_irrigation_date") != "null")
                                     field.setFieldPrevIrrigationDate(fieldObject.getString("prev_irrigation_date"));
@@ -153,6 +155,7 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
                                     field.setFieldNextIrrigationDate(fieldObject.getString("next_irrigation_date"));
                                 fieldList.add(field);
                             }
+
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -259,11 +262,9 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onClick(View view) {
                     if(callBtn){
-                        Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + fieldList.get(i).getFieldLspPhoneNumber()));
-                        startActivity(callIntent);
+                        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + fieldList.get(i).getFieldLspPhoneNumber())));
                     }else {
-                        String number =fieldList.get(i).getFieldLspPhoneNumber();
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", number, null)));
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", fieldList.get(i).getFieldLspPhoneNumber(), null)));
                     }
                 }
             });

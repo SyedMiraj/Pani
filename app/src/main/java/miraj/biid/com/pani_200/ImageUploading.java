@@ -86,7 +86,6 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     private final int GALLERY_REQUEST = 1200;
     private final int CAMERA_REQUEST = 1500;
     private final int CAMERA_REQUEST_GREATER_VERSION_API = 900;
-    public final String APP_TAG = "PaniApplication";
     List<String> imageList =  new ArrayList<String>();
     AsyncHttpClient httpClient;
     File fileProvide;
@@ -142,8 +141,8 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     private void imageCapturing(){
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) ==
-                        PackageManager.PERMISSION_GRANTED){
+                if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED &&
+                        checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
                     captureImageForGreaterVersionAPI();
                 }else{
                     if(shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)){
@@ -328,10 +327,6 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                 addImageToInterface(photoPath, false);
             }
             if(requestCode == CAMERA_REQUEST_GREATER_VERSION_API){
-//                Bundle bundle = data.getExtras();
-//                Bitmap bitmap = (Bitmap) bundle.get("data");
-//                Uri tempUri = getImageUri(getApplicationContext(), bitmap);
-//                File finalFile = new File(getRealPathFromURI(tempUri));
                 addImageToInterface(fileProvide.getAbsolutePath(), true);
                 fileProvide = null;
             }
@@ -522,21 +517,23 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
     }
 
     public void captureImageForGreaterVersionAPI(){
+
+        Uri picUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName()+".provider", createImageFile());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        fileProvide = getPhotoFileUri("img_field_" + fieldId + "_" + new Random().nextInt(999)+".jpg");
-        String auth = getApplicationContext().getPackageName() + ".fileprovider";
-        Uri fileProvider = FileProvider.getUriForFile(ImageUploading.this, auth, fileProvide);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, CAMERA_REQUEST_GREATER_VERSION_API);
-        }
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, picUri);
+        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        startActivityForResult(intent, CAMERA_REQUEST_GREATER_VERSION_API);
+
     }
 
-    // Returns the File for a photo stored on disk given the fileName
-    public File getPhotoFileUri(String fileName) {
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-        return file;
+    private File createImageFile() {
+        File picDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String timestamp = sdf.format(new Date());
+
+        fileProvide = new File(picDirectory, "field_"+fieldId+"_pic_"+timestamp+".jpg");
+        return fileProvide;
     }
+
 
 }
