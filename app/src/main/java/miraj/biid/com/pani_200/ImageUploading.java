@@ -51,6 +51,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -63,6 +64,7 @@ import java.util.Map;
 import java.util.Random;
 
 import cz.msebera.android.httpclient.Header;
+import miraj.biid.com.pani_200.exceptions.BaseException;
 import miraj.biid.com.pani_200.helpers.HTTPHelper;
 import miraj.biid.com.pani_200.utils.Util;
 
@@ -232,6 +234,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                             case "HideProgress":
                                 progressDialog.dismiss();
                                 saveImageValueToServer(finalResult,fieldId);
+                                saveImageValueToInternalStorage(finalResult,fieldId);
                         }
                     }
                 };
@@ -501,6 +504,63 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                     progressDialog.dismiss();
                 }
             });
+        }
+    }
+
+    private void saveImageValueToInternalStorage(String value, String fieldId){
+
+        final Field field = new Field();
+        try{
+            httpClient.get("http://www.pani-gca.net/public/index.php/api/fields_by_field_id/" + fieldId, new JsonHttpResponseHandler() {
+                @Override
+                public void onStart() {
+                    super.onStart();
+                    progressDialog.show();
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    try {
+                        if(response.getInt("success") == 1){
+                            JSONObject fieldObject = response.getJSONObject("fields");
+                                field.setFieldName(fieldObject.getString("field_name"));
+                                field.setCropName(fieldObject.getString("crop_name"));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+
+                @Override
+                public void onFinish() {
+                    super.onFinish();
+                    progressDialog.dismiss();
+                }
+            });
+
+            String filename = "gca_value.txt";
+            String fileContents = "Date , Field Name, Crop, GCA Value" +"\r\n"+ new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " , "+
+                    field.getFieldName() + "," + field.getCropName() + "," + value + "\r\n";
+            FileOutputStream outputStream;
+
+            try {
+                outputStream = openFileOutput(filename, Context.MODE_APPEND);
+                outputStream.write(fileContents.getBytes());
+                outputStream.close();
+                String filepath = getFilesDir().getAbsolutePath();
+                Util.showToast(getApplicationContext(), "File saved in " + filepath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }catch(BaseException b){
+            Util.showToast(getApplicationContext(), b.getMessage());
         }
     }
 
