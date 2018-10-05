@@ -192,13 +192,7 @@ public class FieldDetailsInputActivity extends AppCompatActivity implements View
         params.add("farmer_id", farmerId);
         params.add("field_prev_irri_date", prevIrrigationDateText);
         params.add("field_next_irri_date", nextIrrigationDateText);
-        String location = "";
-        for (int i = 0; i < AddFieldsActivity.selectedPoints.size(); i++) {
-            location += AddFieldsActivity.selectedPoints.get(i).latitude + ":" + AddFieldsActivity.selectedPoints.get(i).longitude;
-            if (i != AddFieldsActivity.selectedPoints.size() - 1) {
-                location += ";";
-            }
-        }
+        String location = existField.getFieldLocation();
         params.add("location", location);
 
         httpClient.put("http://www.pani-gca.net/public/index.php/api/updatefields", params, new JsonHttpResponseHandler() {

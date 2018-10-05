@@ -44,7 +44,7 @@ import miraj.biid.com.pani_200.utils.Util;
 
 public class FarmerMainActivity extends AppCompatActivity implements View.OnClickListener,PopupMenu.OnMenuItemClickListener{
 
-    Button addFieldsBtn,manageFieldsBtn,callLspBtn,msgLspBtn;
+    Button addFieldsBtn,manageFieldsBtn,callLspBtn,msgLspBtn, imgAnalysisValueBtn;
     TextView userNameTv;
     Toolbar toolbar;
     PrefUtils prefUtils;
@@ -85,10 +85,12 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
         callLspBtn = (Button) findViewById(R.id.farmerCallLspBtn);
         msgLspBtn = (Button) findViewById(R.id.farmerMsgLspBtn);
         userNameTv = (TextView) findViewById(R.id.userNameTv);
+        imgAnalysisValueBtn = (Button)findViewById(R.id.internal_text) ;
         addFieldsBtn.setOnClickListener(this);
         manageFieldsBtn.setOnClickListener(this);
         callLspBtn.setOnClickListener(this);
         msgLspBtn.setOnClickListener(this);
+        imgAnalysisValueBtn.setOnClickListener(this);
         getAllFields();
     }
 
@@ -118,6 +120,10 @@ public class FarmerMainActivity extends AppCompatActivity implements View.OnClic
             case R.id.farmerCallLspBtn:
                 callBtn = true;
                 showFieldListDialog();
+                break;
+            case R.id.internal_text:
+                intent = new Intent(this,ImageAnalysisInternalValue.class);
+                startActivity(intent);
                 break;
         }
     }

@@ -96,7 +96,10 @@
             android:name=".ViewAlertMessage"
             android:parentActivityName=".FarmerFieldListActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".ImageAnalysisInternalValue"
+            android:parentActivityName=".FarmerMainActivity"
+            android:screenOrientation="portrait" />
         <service
             android:name=".MyMessagingService">
             <intent-filter>

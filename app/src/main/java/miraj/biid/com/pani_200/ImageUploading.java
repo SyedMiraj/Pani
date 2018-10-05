@@ -507,9 +507,7 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void saveImageValueToInternalStorage(String value, String fieldId){
-
-        final Field field = new Field();
+    private void saveImageValueToInternalStorage(final String value, String fieldId){
         try{
             httpClient.get("http://www.pani-gca.net/public/index.php/api/fields_by_field_id/" + fieldId, new JsonHttpResponseHandler() {
                 @Override
@@ -524,8 +522,20 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                     try {
                         if(response.getInt("success") == 1){
                             JSONObject fieldObject = response.getJSONObject("fields");
-                                field.setFieldName(fieldObject.getString("field_name"));
-                                field.setCropName(fieldObject.getString("crop_name"));
+                            String filename = "gca_value.txt";
+                            String fileContents = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " , "+
+                                    fieldObject.getString("field_name") + ", " + fieldObject.getString("crop_name") + ", " + value + "\r\n";
+                            FileOutputStream outputStream;
+
+                            try {
+                                outputStream = openFileOutput(filename, Context.MODE_APPEND);
+                                outputStream.write(fileContents.getBytes());
+                                outputStream.close();
+                                String filepath = getFilesDir().getAbsolutePath();
+                                Util.showToast(getApplicationContext(), "File saved in " + filepath);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -543,21 +553,6 @@ public class ImageUploading extends AppCompatActivity implements View.OnClickLis
                     progressDialog.dismiss();
                 }
             });
-
-            String filename = "gca_value.txt";
-            String fileContents = "Date , Field Name, Crop, GCA Value" +"\r\n"+ new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + " , "+
-                    field.getFieldName() + "," + field.getCropName() + "," + value + "\r\n";
-            FileOutputStream outputStream;
-
-            try {
-                outputStream = openFileOutput(filename, Context.MODE_APPEND);
-                outputStream.write(fileContents.getBytes());
-                outputStream.close();
-                String filepath = getFilesDir().getAbsolutePath();
-                Util.showToast(getApplicationContext(), "File saved in " + filepath);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
         }catch(BaseException b){
             Util.showToast(getApplicationContext(), b.getMessage());
